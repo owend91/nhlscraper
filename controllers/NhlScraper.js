@@ -1,27 +1,28 @@
 const cheerio = require('cheerio');
 const _ = require('lodash');
 const axios = require('axios');
-const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost:27017/capsDB", {
-  useUnifiedTopology: true,
-  useNewUrlParser: true
-});
+// const mongoose = require("mongoose");
+// mongoose.connect("mongodb://localhost:27017/nhlDB", {
+//   useUnifiedTopology: true,
+//   useNewUrlParser: true
+// });
 
-const url = "https://www.nhl.com/capitals/roster/";
+const nhlUrl = "https://www.nhl.com/";
 const years = []
 
-
+populateYears();
 module.exports.getNames = getNames;
 module.exports.getStats = getStats;
-module.exports.createPlayerObjects = function createPlayerObjects(){
+module.exports.createPlayerObjects = function createPlayerObjects(team){
+  const teamUrl = nhlUrl + team + '/roster/';
   const urls = [];
   let returnPlayers = []
-  populateYears();
+
   for (year of years) {
-    urls.push(url + year);
+    urls.push(teamUrl + year);
   }
 
-  let promiseArray = urls.map(url => (axios.get(url).catch(error => console.log('Invalid year'))));
+  let promiseArray = urls.map(url => (axios.get(url).catch(error => console.log('Invalid year: ' + url.slice(url.length-4)))));
   return Promise.all(promiseArray)
     .then(
       results => {
@@ -48,6 +49,7 @@ module.exports.createPlayerObjects = function createPlayerObjects(){
                   weight: stats[i].weight,
                   birthdate: stats[i].birthdate,
                   hometown: stats[i].hometown,
+                  team: team,
                   years:[currYear]
 
                 };
