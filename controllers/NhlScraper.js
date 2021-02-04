@@ -27,49 +27,35 @@ module.exports.createPlayerObjects = function createPlayerObjects(){
       results => {
         let totalNames = [];
         let thisYearNames = [];
-        let namesToInsert = [];
         for (result of results) {
           if (result) {
-            const currYear = result.config.url.slice(result.config.url.length -4);
+            let currYear = result.config.url.slice(result.config.url.length -4);
             console.log("Current Year: " + currYear);
+            let stats = getStats(result.data);
             namesToInsert = [];
             thisYearNames = getNames(result.data);
             console.log(thisYearNames);
-            for (thisYearName of thisYearNames) {
+            for ([i,thisYearName] of thisYearNames.entries()) {
               if (_.findIndex(totalNames, function(o) {
                   return o == thisYearName;
                 }) == -1) {
                 totalNames.push(thisYearName);
-                namesToInsert.push(thisYearName);
+                const player = {
+                  name: thisYearName,
+                  number: stats[i].number,
+                  position: stats[i].position,
+                  shoots: stats[i].shoots,
+                  height: stats[i].height,
+                  weight: stats[i].weight,
+                  birthdate: stats[i].birthdate,
+                  hometown: stats[i].hometown
+                };
+                returnPlayers.push(player);
               }
-            }
-            const stats = getStats(result.data);
-
-            for ([i, name] of namesToInsert.entries()) {
-              const player = {
-                name: name,
-                number: stats[i].number,
-                position: stats[i].position,
-                shoots: stats[i].shoots,
-                height: stats[i].height,
-                weight: stats[i].weight,
-                birthdate: stats[i].birthdate,
-                hometown: stats[i].hometown
-              };
-              returnPlayers.push(player);
             }
           }
         }
         return returnPlayers;
-        // for (player of returnPlayers) {
-        //   const playerDoc = new Player(player);
-        //   console.log(playerDoc);
-        //   playerDoc.save(function(err) {
-        //     if (err) {
-        //       console.log(err);
-        //     }
-        //   });
-        // }
       });
 
 }
