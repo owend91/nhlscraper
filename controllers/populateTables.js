@@ -13,7 +13,8 @@ const playerSchema = new mongoose.Schema({
   height: String,
   weight: String,
   birthdate: String,
-  hometown: String
+  hometown: String,
+  years: [String]
 });
 
 const Player = new mongoose.model("Player", playerSchema);
@@ -45,3 +46,8 @@ async function populateDocuments(deleteDocuments) {
     }
   });
 }
+
+// useful queries
+// FInd who was with a team for the most seasons
+//in shell: db.players.aggregate( {$unwind:"$years"}, {"$group" : {_id:"$name", count:{$sum:1}}}, { $sort : { "count" : -1 }})
+//in Robo 3T:db.getCollection('players').aggregate( {$unwind:"$years"}, {$sortByCount:"$name"})

@@ -1,4 +1,4 @@
 
 const db = require('./controllers/populateTables.js')
 
-db.populateDocuments();
+db.populateDocuments(true);

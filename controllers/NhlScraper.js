@@ -25,7 +25,6 @@ module.exports.createPlayerObjects = function createPlayerObjects(){
   return Promise.all(promiseArray)
     .then(
       results => {
-        let totalNames = [];
         let thisYearNames = [];
         for (result of results) {
           if (result) {
@@ -36,10 +35,10 @@ module.exports.createPlayerObjects = function createPlayerObjects(){
             thisYearNames = getNames(result.data);
             console.log(thisYearNames);
             for ([i,thisYearName] of thisYearNames.entries()) {
-              if (_.findIndex(totalNames, function(o) {
-                  return o == thisYearName;
-                }) == -1) {
-                totalNames.push(thisYearName);
+              let index = _.findIndex(returnPlayers, function(o) {
+                  return o.name == thisYearName;
+                });
+              if (index == -1) {
                 const player = {
                   name: thisYearName,
                   number: stats[i].number,
@@ -48,9 +47,13 @@ module.exports.createPlayerObjects = function createPlayerObjects(){
                   height: stats[i].height,
                   weight: stats[i].weight,
                   birthdate: stats[i].birthdate,
-                  hometown: stats[i].hometown
+                  hometown: stats[i].hometown,
+                  years:[currYear]
+
                 };
                 returnPlayers.push(player);
+              } else {
+                returnPlayers[index].years.push(currYear);
               }
             }
           }
