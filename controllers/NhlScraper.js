@@ -10,18 +10,6 @@ mongoose.connect("mongodb://localhost:27017/capsDB", {
 const url = "https://www.nhl.com/capitals/roster/";
 const years = []
 
-// const playerSchema = new mongoose.Schema({
-//   name: String,
-//   number: String,
-//   position: String,
-//   shoots: String,
-//   height: String,
-//   weight: String,
-//   birthdate: String,
-//   hometown: String
-// });
-//
-// const Player = new mongoose.model("Player", playerSchema);
 
 module.exports.getNames = getNames;
 module.exports.getStats = getStats;
