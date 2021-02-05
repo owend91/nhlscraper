@@ -14,10 +14,10 @@ const playerSchema = new mongoose.Schema({
   weight: String,
   birthdate: String,
   hometown: String,
-  team: String,
-  years: [String]
+  teams: {type: Map, of:[String]}
 });
 
+const allPlayers = [];
 const Player = new mongoose.model("Player", playerSchema);
 
 const teamSchema = new mongoose.Schema({
@@ -56,13 +56,28 @@ async function populateDocuments(deleteDocuments) {
     });
     await scrape.createPlayerObjects(team).then(players => {
       for (player of players) {
-        const playerDoc = new Player(player);
-        playerDoc.save(function(err) {
-          if (err) {
-            console.log(err);
-          }
-        });
-        currTeamObj.players.push(playerDoc);
+        const foundPlayers = allPlayers.filter(function(p){return p.name === player.name})
+        if(foundPlayers.length == 0){
+          const playerDoc = new Player(player);
+          // console.log(playerDoc);
+          playerDoc.save(function(err) {
+            if (err) {
+              console.log(err);
+            }
+          });
+          currTeamObj.players.push(playerDoc);
+          allPlayers.push(playerDoc);
+        } else {
+          const foundPlayer = foundPlayers[0];
+          foundPlayer.teams.set(team, player.teams[team]);
+
+          foundPlayer.save(function(err) {
+            if (err) {
+              console.log(err);
+            }
+          });
+          currTeamObj.players.push(foundPlayer);
+        }
       }
       currTeamObj.save(function(err){
         if(err){
@@ -72,9 +87,6 @@ async function populateDocuments(deleteDocuments) {
     });
   }
 }
-
-// const teams = ['bruins','capitals', 'sabres'
-// ]
 
 const teams = ['bruins', 'sabres', 'devils', 'islanders', 'rangers',
   'flyers', 'penguins', 'capitals', 'hurricanes', 'blackhawks',
@@ -94,3 +106,9 @@ const teams = ['bruins', 'sabres', 'devils', 'islanders', 'rangers',
 
 //Teams with most players
 //Robo 3T: db.getCollection('teams').aggregate({$unwind:"$players"}, {$sortByCount:"$name"})
+
+//Find all the players on a team
+// db.getCollection('players').find({'teams.capitals':{$exists:true}})
+
+//Find all players that have been on two teams:
+// db.getCollection('players').find({'teams.capitals':{$exists:true},'teams.bruins':{$exists:true}})

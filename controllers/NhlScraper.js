@@ -1,11 +1,6 @@
 const cheerio = require('cheerio');
 const _ = require('lodash');
 const axios = require('axios');
-// const mongoose = require("mongoose");
-// mongoose.connect("mongodb://localhost:27017/nhlDB", {
-//   useUnifiedTopology: true,
-//   useNewUrlParser: true
-// });
 
 const nhlUrl = "https://www.nhl.com/";
 const years = []
@@ -32,9 +27,8 @@ module.exports.createPlayerObjects = function createPlayerObjects(team){
             let currYear = result.config.url.slice(result.config.url.length -4);
             console.log("Current Year: " + currYear);
             let stats = getStats(result.data);
-            namesToInsert = [];
             thisYearNames = getNames(result.data);
-            console.log(thisYearNames);
+            // console.log(thisYearNames);
             for ([i,thisYearName] of thisYearNames.entries()) {
               let index = _.findIndex(returnPlayers, function(o) {
                   return o.name == thisYearName;
@@ -49,13 +43,13 @@ module.exports.createPlayerObjects = function createPlayerObjects(team){
                   weight: stats[i].weight,
                   birthdate: stats[i].birthdate,
                   hometown: stats[i].hometown,
-                  team: team,
-                  years:[currYear]
-
+                  teams:{}
                 };
+                player.teams[team] = [currYear];
+                console.log(player);
                 returnPlayers.push(player);
               } else {
-                returnPlayers[index].years.push(currYear);
+                returnPlayers[index].teams[team].push(currYear);
               }
             }
           }
@@ -179,9 +173,10 @@ function getStats(html) {
 
 function populateYears() {
   let currYear = new Date().getFullYear();
-  while (currYear > 1916) {
+  while (currYear > 1917) {
     currYear--;
     years.push('' + currYear);
   }
+
   // console.log(years);
 }
