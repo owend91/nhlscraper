@@ -26,7 +26,7 @@ Known Issues:
   - Height is stored twice (for example Nick Backstroms height is "6'1"6' 1"")
   - Birthdate is stored twice (for example Nick Backstroms birthdate is  "11/23/87Nov 23,1987")
   - The data is only current (for example, Braden Holtby was number 70 with the Capitals, he is now number 49 with Vancouver. 49 is stored in the database)
-  - The same player is pulled for each team, so multiple player collections are created if a player plays for more than one team.
+  - Players with the same name are merged into the same object
 
 
 Next Steps:
