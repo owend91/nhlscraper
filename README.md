@@ -8,7 +8,7 @@ To run:
 3. Make sure MongoDB is running locally 
 4. Run 'node populateLocal.js' - This will empty the collection and re-insert everything
 
-You can also deploy the app.js as an express server, and when you get '/' it'll reload the database.
+You can also deploy the app.js as an express server, and when you GET '/' it'll reload the database.
 
 Current Data Stored:
   - Name
