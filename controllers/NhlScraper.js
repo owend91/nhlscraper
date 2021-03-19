@@ -39,9 +39,9 @@ module.exports.createPlayerObjects = function createPlayerObjects(team){
                   number: stats[i].number,
                   position: stats[i].position,
                   shoots: stats[i].shoots,
-                  height: stats[i].height,
+                  height: stats[i].height.slice(0,stats[i].height.indexOf('"')+1),
                   weight: stats[i].weight,
-                  birthdate: stats[i].birthdate,
+                  birthdate: stats[i].birthdate.slice(8),
                   hometown: stats[i].hometown,
                   teams:{}
                 };
