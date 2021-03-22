@@ -1,18 +1,36 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const ejs = require("ejs");
 const cheerio = require('cheerio');
 const db = require('./controllers/populateTables.js')
-
-const url = "https://www.nhl.com/capitals/roster/";
-const years = []
-
+const mongoose = require("mongoose");
+const Player = require('./models/playerModel.js')
+mongoose.connect("mongodb://localhost:27017/nhlDB", {
+  useUnifiedTopology: true,
+  useNewUrlParser: true
+});
 
 const app = express();
 
-app.get("/", function(req, res) {
-  db.populateDocuments(true);
-});
+app.route("/players/:team/:year")
+.get(function(req, res) {
+  const query = {};
+  const team = req.params.team;
+  const year = req.params.year;
+  query[`teams.${team}`] = {$all: [year]};
+  Player.find(query, function(err, foundPlayers) {
+
+    if (err) {
+      res.send(err);
+    } else {
+      console.log('foundPlayers: ' +foundPlayers);
+      res.send(foundPlayers);
+    }
+  });
+})
+
+// app.get("/", function(req, res) {
+//   db.populateDocuments(true);
+// });
 
 
 

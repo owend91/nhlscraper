@@ -1,5 +1,6 @@
 const scrape = require('./NhlScraper.js')
 const mongoose = require("mongoose");
+const Player = require('../models/playerModel.js')
 mongoose.connect("mongodb://localhost:27017/nhlDB", {
   useUnifiedTopology: true,
   useNewUrlParser: true
@@ -18,7 +19,6 @@ const playerSchema = new mongoose.Schema({
 });
 
 const allPlayers = [];
-const Player = new mongoose.model("Player", playerSchema);
 
 const teamSchema = new mongoose.Schema({
   name: String,
