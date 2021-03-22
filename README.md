@@ -5,8 +5,9 @@ Now pulls all teams.  Each team is a collection that has a name and an array of 
 To populate local MongoDB:
 1. Clone project
 2. Run 'npm install'
-3. Make sure MongoDB is running locally
-4. Run 'node populateLocal.js' - This will empty the collection and re-insert everything
+3. Create a .env in the directory, add a MONGO_URL property that points to your mongoDB, whether local or on the cloud
+4. If running locally, make sure MongoDB is running locally
+5. Run 'node populateLocal.js' - This will empty the collection and re-insert everything
 
 To run the API, simply start the nodejs server.  It is set to go against port 3001.  Make sure your database is populated before trying the API.
 

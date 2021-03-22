@@ -1,8 +1,9 @@
+require('dotenv').config();
 const scrape = require('./NhlScraper.js')
 const mongoose = require("mongoose");
 const Player = require('../models/playerModel.js')
 const constants = require('../constants/constants.js')
-mongoose.connect("mongodb://localhost:27017/nhlDB", {
+mongoose.connect(process.env.MONGO_URL, {
   useUnifiedTopology: true,
   useNewUrlParser: true
 });
@@ -61,22 +62,22 @@ async function populateDocuments(deleteDocuments) {
         if(foundPlayers.length == 0){
           const playerDoc = new Player(player);
           // console.log(playerDoc);
-          playerDoc.save(function(err) {
-            if (err) {
-              console.log(err);
-            }
-          });
+          // playerDoc.save(function(err) {
+          //   if (err) {
+          //     console.log(err);
+          //   }
+          // });
           currTeamObj.players.push(playerDoc);
           allPlayers.push(playerDoc);
         } else {
           const foundPlayer = foundPlayers[0];
           foundPlayer.teams.set(team, player.teams[team]);
 
-          foundPlayer.save(function(err) {
-            if (err) {
-              console.log(err);
-            }
-          });
+          // foundPlayer.save(function(err) {
+          //   if (err) {
+          //     console.log(err);
+          //   }
+          // });
           currTeamObj.players.push(foundPlayer);
         }
       }
@@ -85,6 +86,13 @@ async function populateDocuments(deleteDocuments) {
           console.log(err);
         }
       });
+    });
+  }
+  for(player of allPlayers){
+    player.save(function(err) {
+      if (err) {
+        console.log(err);
+      }
     });
   }
 }

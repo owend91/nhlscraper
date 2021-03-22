@@ -1,10 +1,11 @@
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cheerio = require('cheerio');
 const db = require('./controllers/populateTables.js')
 const mongoose = require("mongoose");
 const Player = require('./models/playerModel.js')
-mongoose.connect("mongodb://localhost:27017/nhlDB", {
+mongoose.connect(process.env.MONGO_URL, {
   useUnifiedTopology: true,
   useNewUrlParser: true
 });
