@@ -1,6 +1,7 @@
 const scrape = require('./NhlScraper.js')
 const mongoose = require("mongoose");
 const Player = require('../models/playerModel.js')
+const constants = require('../constants/constants.js')
 mongoose.connect("mongodb://localhost:27017/nhlDB", {
   useUnifiedTopology: true,
   useNewUrlParser: true
@@ -88,13 +89,7 @@ async function populateDocuments(deleteDocuments) {
   }
 }
 
-const teams = ['bruins', 'sabres', 'devils', 'islanders', 'rangers',
-  'flyers', 'penguins', 'capitals', 'hurricanes', 'blackhawks',
-  'bluejackets', 'stars', 'redwings', 'panthers', 'predators',
-  'lightning', 'ducks', 'coyotes', 'avalanche', 'kings',
-  'wild', 'sharks', 'blues', 'goldenknights', 'flames', 'oilers',
-  'canadiens', 'senators', 'mapleleafs', 'canucks', 'jets',
-]
+const teams = constants.teams
 
 // useful queries
 // FInd who was with a team for the most seasons

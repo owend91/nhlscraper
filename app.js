@@ -55,6 +55,7 @@ app.route("/playersOnTeams?*")
 app.route("/players?*")
 .get(function(req, res) {
   const query = {};
+
   // console.log(req.query);
   for(const param in req.query){
     if(param.startsWith('team')){
@@ -67,13 +68,16 @@ app.route("/players?*")
       query[param.toLowerCase()] = req.query[param];
     } else if(param.toLowerCase() === 'name'){
       const splitName = req.query[param].split(' ');
-      // let regEx;
-      // for(const name in splitName){
-      //
-      // }
-      console.log(req.query[param].split(' '));
-      query[param.toLowerCase()] = {$regex: '^' + splitName[0] + '.*\s?' + splitName[1] + '.*'};
-
+      let regEx = '';
+      for(const ind in splitName){
+        regEx += splitName[ind] + '.*\s?';
+      }
+      query[param.toLowerCase()] = {$regex: regEx, $options:'i'};
+    } else if(param.toLowerCase() === 'birthmonth'){
+      let regEx = req.query[param].slice(0,3) + '.*';
+      query['birthdate'] = {$regex: regEx, $options:'i'};
+    } else if(param.toLowerCase() === 'weight'){
+      query[param.toLowerCase()] = req.query[param];
     }
   }
   // console.log(query);
