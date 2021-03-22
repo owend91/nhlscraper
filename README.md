@@ -21,7 +21,8 @@ Current Data Stored:
 
 Currently Working On:
   - API calls
-    - First call implemented. /players/:team/:year Will return all players on a team for a given year
+    - First call implemented. /playersbyteam/:team/:year Will return all players on a team for a given year.  If year is left off, all players to ever play on that team are returned
+    - Second call: /playersonteams?team1=&team2=... Will return all players to play on all of the given teams. The arguments in the query string must begin with 'team'
 
 
 Known Issues:

@@ -11,12 +11,16 @@ mongoose.connect("mongodb://localhost:27017/nhlDB", {
 
 const app = express();
 
-app.route("/players/:team/:year")
+app.route("/playersByTeam/:team/:year?")
 .get(function(req, res) {
   const query = {};
   const team = req.params.team;
   const year = req.params.year;
-  query[`teams.${team}`] = {$all: [year]};
+  if(year){
+    query[`teams.${team}`] = {$all: [year]};
+  } else {
+    query[`teams.${team}`] = {$exists:true};
+  }
   Player.find(query, function(err, foundPlayers) {
 
     if (err) {
@@ -26,7 +30,28 @@ app.route("/players/:team/:year")
       res.send(foundPlayers);
     }
   });
-})
+});
+
+app.route("/playersOnTeams?*")
+.get(function(req, res) {
+  const query = {};
+  console.log(req.query);
+  for(const team in req.query){
+    if(team.startsWith('team')){
+      query[`teams.${req.query[team]}`] = {$exists:true};
+    }
+  }
+  console.log(query);
+  Player.find(query, function(err, foundPlayers) {
+
+    if (err) {
+      res.send(err);
+    } else {
+      console.log('foundPlayers: ' +foundPlayers);
+      res.send(foundPlayers);
+    }
+  });
+});
 
 // app.get("/", function(req, res) {
 //   db.populateDocuments(true);
