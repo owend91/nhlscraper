@@ -2,11 +2,13 @@
 This scrapes the nhl website to find player data and stores it into a local MongoDB db.
 Now pulls all teams.  Each team is a collection that has a name and an array of Player collections. Each player has a map of teams played for, and an array of years with the team.
 
-To run:
+To populate local MongoDB:
 1. Clone project
 2. Run 'npm install'
 3. Make sure MongoDB is running locally
 4. Run 'node populateLocal.js' - This will empty the collection and re-insert everything
+
+To run the API, simply start the nodejs server.  It is set to go against port 3001.  Make sure your database is populated before trying the API.
 
 Current Data Stored:
   - Name
