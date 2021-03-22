@@ -57,8 +57,6 @@ app.route("/players?*")
 .get(function(req, res) {
   const query = {};
 
-  // console.log(req.query);
-  console.log(req.query);
   for(const param in req.query){
     if(param.startsWith('team')){
       query[`teams.${req.query[param]}`] = {$exists:true};
