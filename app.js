@@ -52,6 +52,41 @@ app.route("/playersOnTeams?*")
     }
   });
 });
+app.route("/players?*")
+.get(function(req, res) {
+  const query = {};
+  // console.log(req.query);
+  for(const param in req.query){
+    if(param.startsWith('team')){
+      query[`teams.${req.query[param]}`] = {$exists:true};
+    } else if(param.toLowerCase() === 'position'){
+      query[param.toLowerCase()] = req.query[param].toUpperCase();
+    } else if(param.toLowerCase() === 'shoots'){
+      query[param.toLowerCase()] = req.query[param].toUpperCase();
+    } else if(param.toLowerCase() === 'number'){
+      query[param.toLowerCase()] = req.query[param];
+    } else if(param.toLowerCase() === 'name'){
+      const splitName = req.query[param].split(' ');
+      // let regEx;
+      // for(const name in splitName){
+      //
+      // }
+      console.log(req.query[param].split(' '));
+      query[param.toLowerCase()] = {$regex: '^' + splitName[0] + '.*\s?' + splitName[1] + '.*'};
+
+    }
+  }
+  // console.log(query);
+  Player.find(query, function(err, foundPlayers) {
+
+    if (err) {
+      res.send(err);
+    } else {
+      // console.log('foundPlayers: ' +foundPlayers);
+      res.send(foundPlayers);
+    }
+  });
+});
 
 // app.get("/", function(req, res) {
 //   db.populateDocuments(true);
