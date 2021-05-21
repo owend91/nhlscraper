@@ -22,12 +22,14 @@ module.exports.createPlayerObjects = function createPlayerObjects(team){
     .then(
       results => {
         let thisYearNames = [];
+        let thisYearNhlIds = [];
         for (result of results) {
           if (result) {
             let currYear = result.config.url.slice(result.config.url.length -4);
             console.log("Current Year: " + currYear);
             let stats = getStats(result.data);
             thisYearNames = getNames(result.data);
+            thisYearNhlIds = getNhlIds(result.data);
             // console.log(thisYearNames);
             for ([i,thisYearName] of thisYearNames.entries()) {
               let index = _.findIndex(returnPlayers, function(o) {
@@ -43,6 +45,7 @@ module.exports.createPlayerObjects = function createPlayerObjects(team){
                   weight: stats[i].weight,
                   birthdate: stats[i].birthdate.slice(8),
                   hometown: stats[i].hometown,
+                  nhlId: thisYearNhlIds[i],
                   teams:{}
                 };
                 player.teams[team] = [currYear];
@@ -98,6 +101,19 @@ function getNames(html) {
   // console.log(data);
   return data;
 }
+
+function getNhlIds(html) {
+  const data = [];
+  const $ = cheerio.load(html);
+  $('.player-photo').each((i, elem) => {
+    // data.push(elem.attr("src"));
+    data.push(elem.parent.attribs.href.slice(elem.parent.attribs.href.lastIndexOf("-")+1));
+
+    });
+  // console.log(data);
+  return data;
+}
+
 
 
 function getStats(html) {

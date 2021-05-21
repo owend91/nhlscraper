@@ -9,6 +9,7 @@ const playerSchema = new mongoose.Schema({
   weight: String,
   birthdate: String,
   hometown: String,
+  nhlId: String,
   teams: {type: Map, of:[String]}
 });
 const Player = new mongoose.model("Player", playerSchema);

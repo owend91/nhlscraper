@@ -17,6 +17,7 @@ const playerSchema = new mongoose.Schema({
   weight: String,
   birthdate: String,
   hometown: String,
+  nhlId: String,
   teams: {type: Map, of:[String]}
 });
 
@@ -58,7 +59,7 @@ async function populateDocuments(deleteDocuments) {
     });
     await scrape.createPlayerObjects(team).then(players => {
       for (player of players) {
-        const foundPlayers = allPlayers.filter(function(p){return p.name === player.name})
+        const foundPlayers = allPlayers.filter(p => {return p.nhlId === player.nhlId})
         if(foundPlayers.length == 0){
           const playerDoc = new Player(player);
           // console.log(playerDoc);
