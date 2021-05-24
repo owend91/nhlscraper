@@ -3,6 +3,8 @@ const scrape = require('./NhlScraper.js')
 const mongoose = require("mongoose");
 const Player = require('../models/playerModel.js')
 const constants = require('../constants/constants.js')
+const nhlApi = require('../controllers/NhlApiCalls');
+const { promiseImpl } = require('ejs');
 mongoose.connect(process.env.MONGO_URL, {
   useUnifiedTopology: true,
   useNewUrlParser: true
@@ -18,6 +20,7 @@ const playerSchema = new mongoose.Schema({
   birthdate: String,
   hometown: String,
   nhlId: String,
+  stats: {type: Map},
   teams: {type: Map, of:[String]}
 });
 
@@ -89,13 +92,29 @@ async function populateDocuments(deleteDocuments) {
       });
     });
   }
+
+  let i = 0;
+
   for(player of allPlayers){
+    // console.log(player.name);
+    let stats = await nhlApi.getPlayingStats(player.nhlId, year);
+    player.stats = stats;
+    
     player.save(function(err) {
       if (err) {
         console.log(err);
       }
+      console.log(`i: ${i}`)
+      if(i === allPlayers.length - 1){
+        console.log("Done!");
+        process.exit(1);
+      } else {
+        i++;
+      }
     });
   }
+
+
 }
 
 const teams = constants.teams

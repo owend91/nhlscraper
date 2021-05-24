@@ -56,7 +56,8 @@ app.route("/playersOnTeams?*")
 app.route("/players?*")
 .get(function(req, res) {
   const query = {};
-
+  const otherParams = []
+  console.log(req.query);
   for(const param in req.query){
     if(param.startsWith('team')){
       query[`teams.${req.query[param]}`] = {$exists:true};
@@ -78,16 +79,52 @@ app.route("/players?*")
       query['birthdate'] = {$regex: regEx, $options:'i'};
     } else if(param.toLowerCase() === 'weight'){
       query[param.toLowerCase()] = req.query[param];
+    } else {
+      otherParams.push(param);
     }
   }
-  // console.log(query);
-  Player.find(query, function(err, foundPlayers) {
+  console.log(otherParams);
+  const foundPlayers = Player.find(query, function(err, foundPlayers) {
 
     if (err) {
       res.send(err);
     } else {
       // console.log('foundPlayers: ' +foundPlayers);
-      res.send(foundPlayers);
+        if(otherParams.length === 0){
+          res.send(foundPlayers);
+        } else {
+          const returnPlayers = [];
+          for(const param of otherParams){
+            if(param === "seasongoals"){
+              const goalValue = parseInt(req.query[param].slice(2));
+              const comparator = req.query[param].slice(0,2);
+              console.log(`comparator: ${comparator}     goals: ${goalValue}`);
+              for(player of foundPlayers){
+                //loop through seasons
+                let added = false;
+
+                for(const[key, value] of player.stats){
+                // player.stats.forEach((value, key) => {
+                  //loop through teams
+                  let goalCount = 0;
+                  for (const [team, stats] of Object.entries(value)) {
+                    goalCount += parseInt(stats.goals);
+                    if(compareTo(comparator, goalCount, goalValue)){
+                      returnPlayers.push(player);
+                      added = true;
+                      break;
+                    }
+                  }
+                  if(added){
+                    break;
+                  }
+                }
+              }
+            }
+          }
+          console.log("players: " + returnPlayers);
+          res.send(returnPlayers);
+        }
     }
   });
 });
@@ -96,7 +133,19 @@ app.route("/players?*")
 //   db.populateDocuments(true);
 // });
 
-
+function compareTo(comparator, value1, value2){
+  if(comparator === 'gt'){
+    return value1 > value2;
+  } else if(comparator === 'lt'){
+    return value1 < value2;
+  } else if(comparator === 'eq'){
+    return value1 === value2;
+  } else if(comparator === 'ge'){
+    return value1 >= value2;
+  } else if(comparator === 'le'){
+    return value1 <= value2;
+  }
+}
 
 app.listen(process.env.PORT || 3001, function() {
   console.log("Server started on port 3001");
