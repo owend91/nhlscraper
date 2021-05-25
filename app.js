@@ -60,6 +60,7 @@ app.route("/players?*")
   const query = {};
   const otherParams = []
   console.log(req.query);
+  let sameSeason = false;
   for(const param in req.query){
     if(param.startsWith('team')){
       query[`teams.${req.query[param]}`] = {$exists:true};
@@ -82,7 +83,11 @@ app.route("/players?*")
     } else if(param.toLowerCase() === 'weight'){
       query[param.toLowerCase()] = req.query[param];
     } else {
-      otherParams.push(param);
+      if(param === 'sameseason'){
+        sameSeason = req.query[param] === 'y'? true : false;
+      } else {
+        otherParams.push(param);
+      }
     }
   }
   console.log(otherParams);
@@ -101,24 +106,32 @@ app.route("/players?*")
           }  
 
           const returnMap = {};
-          let firstLoop = true;
-          for(const param of otherParams){
-            if(param.startsWith("season")){
-              const goalValue = parseInt(req.query[param].slice(2));
-              const comparator = req.query[param].slice(0,2);
-              for(player of foundPlayers){
-                //loop through seasons
-                let added = false;
-                if(apiHelper.statComparator(player, param.slice(6), comparator, goalValue)){
-                  if(firstLoop){
-                    returnMap[player.nhlId] = true;
-                  }   
-                } else {
-                  returnMap[player.nhlId] = false;
-                }
+          if(sameSeason){
+            for(player of foundPlayers){
+              if(apiHelper.statComparatorSameSeason(player, otherParams, req)){
+                returnMap[player.nhlId] = true;
               }
             }
-            firstLoop = false;
+          } else {
+            let firstLoop = true;
+            for(const param of otherParams){
+              if(param.startsWith("season")){
+                const goalValue = parseInt(req.query[param].slice(2));
+                const comparator = req.query[param].slice(0,2);
+                for(player of foundPlayers){
+                  //loop through seasons
+                  let added = false;
+                  if(apiHelper.statComparator(player, param.slice(6), comparator, goalValue)){
+                    if(firstLoop){
+                      returnMap[player.nhlId] = true;
+                    }   
+                  } else {
+                    returnMap[player.nhlId] = false;
+                  }
+                }
+              }
+              firstLoop = false;
+            }
           }
           const returnArray = [];
           for(const [key, val] of Object.entries(returnMap)){
@@ -126,7 +139,7 @@ app.route("/players?*")
               returnArray.push(playerMap[key]);
             }
           }
-          console.log(returnArray);
+          // console.log(returnArray);
           res.send(Object.values(returnArray));
         }
     }

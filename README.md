@@ -43,4 +43,4 @@ Next Steps:
   - Some sort of front end
   - Expand API calls
   - Include overall stats on the main player object
-  - Have a flag where stat queries apply to a single season
+  - Have a flag where stat queries apply to a single season [DONE]
