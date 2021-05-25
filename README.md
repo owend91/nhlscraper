@@ -28,7 +28,7 @@ Currently Working On:
     - First call implemented. /playersbyteam/:team/:year Will return all players on a team for a given year.  If year is left off, all players to ever play on that team are returned
     - Second call: /playersonteams?team1=&team2=... Will return all players to play on all of the given teams. The arguments in the query string must begin with 'team'
     - Third call: /players? where the queries can be any number of teams (team1=, team2=...), weight, birthmonth (jan, feb, mar ...), shoots (l,r),
-    and position (d, lw, rw, c, g), number and name.  NEW: you can also now add a query for goals in a season (seasongoals=[comparator][number] where comparator is gt, ge, lt, le, eq and number is the number of goals to compare to)
+    and position (d, lw, rw, c, g), number and name.  Updated: you can also now add a query for any stat in a season (that is returned under the stat key.  If you add multiple, they will return if a player has ever had a season for each of the conditions, does not have to be the same season).  They field needs to be started with 'season' to indicate the query is against a single season (ie. seasongoals=[comparator][number] where comparator is gt, ge, lt, le, eq and number is the number of goals to compare to)
 
 
 Known Issues:
@@ -43,3 +43,4 @@ Next Steps:
   - Some sort of front end
   - Expand API calls
   - Include overall stats on the main player object
+  - Have a flag where stat queries apply to a single season

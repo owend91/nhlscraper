@@ -5,6 +5,8 @@ const cheerio = require('cheerio');
 const db = require('./controllers/populateTables.js')
 const mongoose = require("mongoose");
 const Player = require('./models/playerModel.js')
+const apiHelper = require('./controllers/ApiHelper.js');
+
 mongoose.connect(process.env.MONGO_URL, {
   useUnifiedTopology: true,
   useNewUrlParser: true
@@ -93,37 +95,39 @@ app.route("/players?*")
         if(otherParams.length === 0){
           res.send(foundPlayers);
         } else {
-          const returnPlayers = [];
+          const playerMap = {};
+          for(player of foundPlayers){
+            playerMap[player.nhlId] = player;
+          }  
+
+          const returnMap = {};
+          let firstLoop = true;
           for(const param of otherParams){
-            if(param === "seasongoals"){
+            if(param.startsWith("season")){
               const goalValue = parseInt(req.query[param].slice(2));
               const comparator = req.query[param].slice(0,2);
-              console.log(`comparator: ${comparator}     goals: ${goalValue}`);
               for(player of foundPlayers){
                 //loop through seasons
                 let added = false;
-
-                for(const[key, value] of player.stats){
-                // player.stats.forEach((value, key) => {
-                  //loop through teams
-                  let goalCount = 0;
-                  for (const [team, stats] of Object.entries(value)) {
-                    goalCount += parseInt(stats.goals);
-                    if(compareTo(comparator, goalCount, goalValue)){
-                      returnPlayers.push(player);
-                      added = true;
-                      break;
-                    }
-                  }
-                  if(added){
-                    break;
-                  }
+                if(apiHelper.statComparator(player, param.slice(6), comparator, goalValue)){
+                  if(firstLoop){
+                    returnMap[player.nhlId] = true;
+                  }   
+                } else {
+                  returnMap[player.nhlId] = false;
                 }
               }
             }
+            firstLoop = false;
           }
-          console.log("players: " + returnPlayers);
-          res.send(returnPlayers);
+          const returnArray = [];
+          for(const [key, val] of Object.entries(returnMap)){
+            if(val){
+              returnArray.push(playerMap[key]);
+            }
+          }
+          console.log(returnArray);
+          res.send(Object.values(returnArray));
         }
     }
   });
@@ -133,19 +137,6 @@ app.route("/players?*")
 //   db.populateDocuments(true);
 // });
 
-function compareTo(comparator, value1, value2){
-  if(comparator === 'gt'){
-    return value1 > value2;
-  } else if(comparator === 'lt'){
-    return value1 < value2;
-  } else if(comparator === 'eq'){
-    return value1 === value2;
-  } else if(comparator === 'ge'){
-    return value1 >= value2;
-  } else if(comparator === 'le'){
-    return value1 <= value2;
-  }
-}
 
 app.listen(process.env.PORT || 3001, function() {
   console.log("Server started on port 3001");
