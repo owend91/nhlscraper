@@ -6,6 +6,7 @@ const db = require('./controllers/populateTables.js')
 const mongoose = require("mongoose");
 const Player = require('./models/playerModel.js')
 const apiHelper = require('./controllers/ApiHelper.js');
+const cors = require('cors')
 
 mongoose.connect(process.env.MONGO_URL, {
   useUnifiedTopology: true,
@@ -13,6 +14,7 @@ mongoose.connect(process.env.MONGO_URL, {
 });
 
 const app = express();
+app.use(cors())
 
 app.route("/playersByTeam/:team/:year?")
 .get(function(req, res) {

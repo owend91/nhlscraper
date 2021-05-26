@@ -26,7 +26,6 @@ module.exports.statComparatorSameSeason = function statComparatorSameSeason(play
       }
       let match = true;
       for(const param of otherParams){
-        console.log(param.slice(6))
         let value = statTotals[param.slice(6)];
         if(param.startsWith("season")){
           const value2 = parseInt(req.query[param].slice(2));
