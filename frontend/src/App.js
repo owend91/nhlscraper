@@ -1,7 +1,7 @@
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
-import Characteristic from './components/characteristicComp'
-import Statistic from './components/statisticComp'
+import Characteristic from './components/Characteristics/CompleteCharacteristicComp'
+import Statistic from './components/Statistics/StatisticComp'
 
 import PlayerDataService from "./services/players"
 import { useState } from 'react';
@@ -65,6 +65,7 @@ function App() {
   }
 
   function submitQuery(e) {
+    alert('update players')
     if(charFields.length === 0 && statFields.length === 0){
       PlayerDataService.getAll();
     } else {
@@ -73,7 +74,7 @@ function App() {
       let query = "";
       charFields.map(char => {
         if(char.characteristic !== ''){
-          query+= `${char.characteristic}=${char.value}&&`;
+          query+= `${char.characteristic}=${char.value.replace(' ', '%20')}&&`;
         }
       });
       statFields.map(stat => {
@@ -126,7 +127,7 @@ function App() {
               {charFields.map( (char, index) => {
                 return (
                     <div class="row">
-                      <Characteristic idx={index} removeChar={handleRemoveCharFields} inputChange={handleCharInputChange} value={char.value} characteristic={char.characteristic} />
+                      <Characteristic width={'5em'} idx={index} removeChar={handleRemoveCharFields} inputChange={handleCharInputChange} value={char.value} characteristic={char.characteristic} />
                     </div>   
                 )
               })}

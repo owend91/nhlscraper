@@ -1,5 +1,5 @@
-import StatisticDropDown from './statisticDropDown'
-import ComparatorDropDown from './comparatorDropDown'
+import StatisticDropDown from './StatisticDropDown'
+import ComparatorDropDown from './ComparatorDropDown'
 
 
 function StatisticComp(props) {
