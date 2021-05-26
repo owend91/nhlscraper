@@ -2,17 +2,19 @@ import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Characteristic from './components/Characteristics/CompleteCharacteristicComp'
 import Statistic from './components/Statistics/StatisticComp'
+import DataTable from 'react-data-table-component'
 
 import PlayerDataService from "./services/players"
 import { useState } from 'react';
 
 function App() {
+
   const [sameSeason, setSameSeason] = useState(false);
   const [charFields, setCharFields] = useState([
-    { value: '', characteristic: '' }
+    
   ]);
   const [statFields, setStatFields] = useState([
-    { value: '', statistic: '', comparator: 'gt' }
+   
   ]);
   const [players, setPlayers] = useState([]);
 
@@ -64,8 +66,11 @@ function App() {
     setSameSeason(!sameSeason);
   }
 
-  function submitQuery(e) {
-    alert('update players')
+  function preventFormSubmit(e){
+    e.preventDefault();
+  }
+
+  function submitQuery() {
     if(charFields.length === 0 && statFields.length === 0){
       PlayerDataService.getAll();
     } else {
@@ -97,13 +102,49 @@ function App() {
         console.log(e);
     });
     }
-    e.preventDefault();
-    
   }
+
+  const columns = [
+    {
+      name: 'Name',
+      selector: 'name',
+      sortable: true,
+    },
+    {
+      name: 'Birth Date',
+      selector: 'birthdate',
+      sortable: true,
+    },
+    {
+      name: 'Height',
+      selector: 'height',
+      sortable: true,
+    },
+    {
+      name: 'Hometown',
+      selector: 'hometown',
+      sortable: true,
+    },
+    {
+      name: 'Position',
+      selector: 'position',
+      sortable: true,
+    },
+    {
+      name: 'Shoots',
+      selector: 'shoots',
+      sortable: true,
+    },
+    {
+      name: 'Number',
+      selector: 'number',
+      sortable: true,
+    },
+  ];
   return (
     <div className="App">
       <div className="container">
-        <form onSubmit={submitQuery}>
+        <form onSubmit={preventFormSubmit}>
         <div className="row">
           <div className="col-lg-6">
             <h3>Characteristic Parameters</h3>
@@ -118,7 +159,7 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="row" style={{maxHeight: '20em', overflowY:'scroll', width:'100%'}}>
+        <div className="row" style={{maxHeight: '15em', overflowY:'scroll', width:'100%'}}>
             <div className="col-lg-6">
               
               {/* <h3>Characteristic Parameters</h3> */}
@@ -154,11 +195,17 @@ function App() {
             </div>
           </div>
           <div className="row pt-2">
-            <button>Submit</button>
+            <button onClick={submitQuery} className='btn btn-outline-success'>Submit</button>
           </div>
         </form>
         <div className="row">
-          <table className='table'>
+            <DataTable
+              title="Players"
+              columns={columns}
+              data={players}
+              pagination={true}
+          />
+          {/* <table className='table'>
             <thead>
               <tr>
                 <th>name</th>
@@ -173,7 +220,7 @@ function App() {
                 )}
               )}
             </tbody>
-          </table>
+          </table> */}
         </div>
       </div>
     </div>
