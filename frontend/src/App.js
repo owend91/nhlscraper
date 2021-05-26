@@ -1,11 +1,13 @@
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
-import Characteristic from './components/Characteristics/CompleteCharacteristicComp'
-import Statistic from './components/Statistics/StatisticComp'
+// import Characteristic from './components/Characteristics/CompleteCharacteristicComp'
+// import Statistic from './components/Statistics/StatisticComp'
 import DataTable from 'react-data-table-component'
+import QueryParams from './components/QueryComponents/QueryComponent'
 
 import PlayerDataService from "./services/players"
 import { useState } from 'react';
+// import {isMobile} from 'react-device-detect';
 
 function App() {
 
@@ -145,55 +147,18 @@ function App() {
     <div className="App">
       <div className="container">
         <form onSubmit={preventFormSubmit}>
-        <div className="row">
-          <div className="col-lg-6">
-            <h3>Characteristic Parameters</h3>
-            <div className="row pb-1">
-                <button className="btn btn-outline-primary" onClick={handleAddCharFields}> Add Property</button>
-              </div>
-          </div>
-          <div className="col-lg-6">
-            <h3>Statistic Parameters</h3>
-            <div className="row pb-1">
-                <button className="btn btn-outline-primary" onClick={handleAddStatFields}> Add Statistic</button>
-            </div>
-          </div>
-        </div>
-        <div className="row" style={{maxHeight: '15em', overflowY:'scroll', width:'100%'}}>
-            <div className="col-lg-6">
-              
-              {/* <h3>Characteristic Parameters</h3> */}
-
-
-              {charFields.map( (char, index) => {
-                return (
-                    <div class="row">
-                      <Characteristic width={'5em'} idx={index} removeChar={handleRemoveCharFields} inputChange={handleCharInputChange} value={char.value} characteristic={char.characteristic} />
-                    </div>   
-                )
-              })}
-              
-            </div>
-            <div className="col-lg-6">
-              {/* <h3>Statistic Parameters</h3> */}
-              
-              <div className="row" style={{textAlign: 'center'}}>
-              <div className="form-check" onClick={updateSeasonCheck}>
-                <input className="" type="checkbox" checked={sameSeason} id="sameSeasonCheck" name="sameSeasonCheck" />
-                <label className="pl-1" for="sameSeasonCheck">
-                  Same season
-                </label>
-              </div>
-              </div>
-              {statFields.map( (stat, index) => {
-                return (
-                    <div class="row">
-                      <Statistic idx={index} removeStat={handleRemoveStatFields} inputChange={handleStatInputChange} value={stat.value} statistic={stat.statistic} comparator={stat.comparator} />
-                    </div>   
-                )
-              })}
-            </div>
-          </div>
+        <QueryParams 
+          handleAddCharFields={handleAddCharFields} 
+          handleAddStatFields={handleAddStatFields}
+          handleRemoveCharFields={handleRemoveCharFields}
+          handleRemoveStatFields={handleRemoveStatFields}
+          updateSeasonCheck={updateSeasonCheck}
+          statFields={statFields}
+          charFields={charFields}
+          sameSeason={sameSeason}
+          handleStatInputChange={handleStatInputChange}
+          handleCharInputChange={handleCharInputChange}
+        />
           <div className="row pt-2">
             <button onClick={submitQuery} className='btn btn-outline-success'>Submit</button>
           </div>
