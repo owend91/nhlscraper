@@ -170,22 +170,6 @@ function App() {
               data={players}
               pagination={true}
           />
-          {/* <table className='table'>
-            <thead>
-              <tr>
-                <th>name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {players.map( player => {
-                return (
-                  <tr>
-                    <td>{player.name}</td>
-                  </tr>
-                )}
-              )}
-            </tbody>
-          </table> */}
         </div>
       </div>
     </div>

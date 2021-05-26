@@ -9,6 +9,7 @@ function CharacteristicDropDown(props) {
         <option value="name">Name</option>
         <option value="birthmonth">Birth Month</option>
         <option value="weight">Weight</option>
+        <option value="homecountry">Home Country</option>
     </select>
     );
   }

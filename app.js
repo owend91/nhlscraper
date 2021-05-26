@@ -36,6 +36,19 @@ app.route("/playersByTeam/:team/:year?")
     }
   });
 });
+// app.route("/distinctCountry")
+// .get(function(req, res) { 
+//   Player.find().distinct('hometown', function(err, hometowns){
+//     const countries = [];
+//     for(town of hometowns){
+//       let country = town.substring(town.length-3);
+//       if(!countries.includes(country)){
+//         countries.push(country);
+//       }
+//     }
+//     res.send(countries);
+//   })
+// });
 
 app.route("/playersOnTeams?*")
 .get(function(req, res) {
@@ -84,6 +97,9 @@ app.route("/players?*")
       query['birthdate'] = {$regex: regEx, $options:'i'};
     } else if(param.toLowerCase() === 'weight'){
       query[param.toLowerCase()] = req.query[param];
+    } else if(param.toLowerCase() === 'homecountry'){
+      let regEx =  '.*' + req.query[param] + '$';
+      query['hometown'] = {$regex: regEx, $options:'i'};
     } else {
       if(param === 'sameseason'){
         sameSeason = req.query[param] === 'y'? true : false;
