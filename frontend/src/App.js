@@ -5,6 +5,7 @@ import QueryParams from './components/QueryComponents/QueryComponent'
 
 import PlayerDataService from "./services/players"
 import { useState } from 'react';
+import CustomStatDisplay from './components/Table/CustomStatDisplay';
 
 function App() {
 
@@ -183,6 +184,22 @@ function App() {
       sortable: true,
     },
   ];
+  // const ExpandableComponent = ({ players }) => {
+  //   const columns2 = [
+  //     {
+  //       name: 'Goals',
+  //       selector: 'goals',
+  //       sortable: true,
+  //     },
+  //   ]
+  //    return <DataTable
+  //             title="Data"
+  //             columns={columns2}
+  //             data={players.stats}
+  //             pagination={true}
+  //             expandableRows
+  //         />
+  // }
   return (
     <div className="App">
       <div className="container">
@@ -210,6 +227,8 @@ function App() {
               columns={columns}
               data={players}
               pagination={true}
+              expandableRows
+              expandableRowsComponent={<CustomStatDisplay />}
           />
         </div>
       </div>
