@@ -86,7 +86,15 @@ function App() {
 
   function submitQuery() {
     if(charFields.length === 0 && statFields.length === 0){
-      PlayerDataService.getAll();
+      console.log("getall");
+      PlayerDataService.getAll()
+      .then(response => {
+        console.log(response.data);
+        setPlayers(response.data);
+    })
+    .catch(e => {
+        console.log(e);
+    });
     } else {
       console.log('chars: ', charFields);
       console.log('stats: ', statFields);

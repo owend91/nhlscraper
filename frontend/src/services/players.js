@@ -3,7 +3,7 @@ import http from "../http-common"
 
 class PlayerDataService {
     getAll(){
-        return http.get()
+        return http.get('players?');
     }
 
     find(query){
