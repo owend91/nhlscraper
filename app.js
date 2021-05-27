@@ -133,7 +133,7 @@ app.route("/players?*")
     if (err) {
       res.send(err);
     } else {
-      console.log('foundPlayers: ' +foundPlayers);
+      // console.log('foundPlayers: ' +foundPlayers);
         if(otherParams.length === 0){
           res.send(foundPlayers);
         } else {

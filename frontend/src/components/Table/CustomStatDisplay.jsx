@@ -1,68 +1,78 @@
 import DataTable from 'react-data-table-component'
 function CustomStatDisplay(props) {
-    console.log(props.data);
+    // console.log(props.data);
     const dat = [];
     for( const season of Object.keys(props.data.stats)){
+        const displaySeason = season.substring(0,4) + "-" + season.substring(4)
         for( const team of Object.keys(props.data.stats[season])){
             const stats = {};
             for(const stat of Object.keys(props.data.stats[season][team])){
                 stats[stat] = props.data.stats[season][team][stat];
             }
-            dat.push({season: season, team: team, ...stats});
+            dat.push({season: displaySeason, team: team, ...stats});
         }
 
     }
-    console.log(dat);
     const columns = [
         {
             name: 'Season',
             selector: 'season',
-            compact: true
+            compact: true,
+            center: true
         },
         {
             name: 'Team',
             selector: 'team',
-            compact: true
+            compact: true,
+            center: true
         },
         {
             name: 'Goals',
             selector: 'goals',
-            compact: true
+            compact: true,
+            center: true
         },
         {
             name: 'Assists',
             selector: 'assists',
-            compact: true
+            compact: true,
+            center: true
         },
         {
             name: 'Points',
             selector: 'points',
-            compact: true
+            compact: true,
+            center: true
         },
         {
             name: 'Games',
             selector: 'games',
-            compact: true
+            compact: true,
+            center: true
         },
         {
             name: 'PIM',
             selector: 'pim',
-            compact: true
+            compact: true,
+            center: true
         },
         {
             name: 'Shots',
             selector: 'shots',
-            compact: true
+            compact: true,
+            center: true
         },
         {
             name: 'Hits',
             selector: 'hits',
-            compact: true
+            compact: true,
+            center: true
         },
         {
             name: 'Shifts',
             selector: 'shifts',
-            compact: true
+            compact: true,
+            center: true
         },
     ]
     return (

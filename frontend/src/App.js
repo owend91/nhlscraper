@@ -86,7 +86,6 @@ function App() {
 
   function submitQuery() {
     if(charFields.length === 0 && statFields.length === 0){
-      console.log("getall");
       PlayerDataService.getAll()
       .then(response => {
         console.log(response.data);
@@ -192,22 +191,6 @@ function App() {
       sortable: true,
     },
   ];
-  // const ExpandableComponent = ({ players }) => {
-  //   const columns2 = [
-  //     {
-  //       name: 'Goals',
-  //       selector: 'goals',
-  //       sortable: true,
-  //     },
-  //   ]
-  //    return <DataTable
-  //             title="Data"
-  //             columns={columns2}
-  //             data={players.stats}
-  //             pagination={true}
-  //             expandableRows
-  //         />
-  // }
   return (
     <div className="App">
       <div className="container">
@@ -225,7 +208,7 @@ function App() {
           handleCharInputChange={handleCharInputChange}
           statyearval={statYear}
         />
-          <div className="row pt-2">
+          <div className="row pt-2 pb-4">
             <button onClick={submitQuery} className='btn btn-outline-success'>Submit</button>
           </div>
         </form>
@@ -237,6 +220,8 @@ function App() {
               pagination={true}
               expandableRows
               expandableRowsComponent={<CustomStatDisplay />}
+              noHeader={true}
+              dense
           />
         </div>
       </div>
