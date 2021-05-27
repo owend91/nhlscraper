@@ -9,6 +9,10 @@ import { useState } from 'react';
 function App() {
 
   const [sameSeason, setSameSeason] = useState(false);
+  const [statYear, setStatYear] = useState('');
+  const [statTeam, setStatTeam] = useState('');
+
+
   const [charFields, setCharFields] = useState([
     
   ]);
@@ -48,16 +52,23 @@ function App() {
   };
   const handleStatInputChange = (index, event) => {
     const values = [...statFields];
-    console.log('event: ', event);
     if (event.target.name === "statvalue") {
       values[index].value = event.target.value;
+      setStatFields(values);
     } else if(event.target.name === "statistic"){
       values[index].statistic = event.target.value;
-    } else {
+      setStatFields(values);
+    } else if(event.target.name === "comparator"){
       values[index].comparator = event.target.value;
+      setStatFields(values);
+    } else if(event.target.name === "statyear"){
+      setStatYear(event.target.value);
+    } else if(event.target.name === "statteam"){
+      setStatTeam(event.target.value);
     }
-    setStatFields(values);
+    
   }; 
+  
   const handleRemoveStatFields = index => {
     const values = [...statFields];
     values.splice(index, 1);
@@ -99,9 +110,28 @@ function App() {
           query+= `${stat.statistic}=${stat.comparator}${stat.value}&&`;
         }
       });
+
+      let statSeasonQueryString = '';
       if(sameSeason){
-        console.log('sameseason');
-        query += 'sameseason=y'
+        statSeasonQueryString += 'sameseason=y';
+      }
+      if(statYear !== ''){
+        const season = parseInt(statYear) + '' + (parseInt(statYear)+1);
+        if(statSeasonQueryString !== ''){
+          statSeasonQueryString += '&&statseason='+season
+        } else {
+          statSeasonQueryString += 'statseason='+season
+        }
+      }
+      if(statTeam !== ''){
+        if(statSeasonQueryString !== ''){
+          statSeasonQueryString += '&&statteam='+statTeam
+        } else {
+          statSeasonQueryString += '&&statteam='+statTeam
+        }
+      }
+      if(statSeasonQueryString !== ''){
+        query += statSeasonQueryString
       } else {
         query = query.slice(0,query.length-2);
       }
@@ -168,6 +198,7 @@ function App() {
           sameSeason={sameSeason}
           handleStatInputChange={handleStatInputChange}
           handleCharInputChange={handleCharInputChange}
+          statyearval={statYear}
         />
           <div className="row pt-2">
             <button onClick={submitQuery} className='btn btn-outline-success'>Submit</button>

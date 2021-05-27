@@ -17,6 +17,10 @@ function QueryComponent(props) {
           sameSeason={props.sameSeason}
           handleStatInputChange={props.handleStatInputChange}
           handleCharInputChange={props.handleCharInputChange}
+          statyearval={props.statyearval}
+          statteam={props.statteam}
+
+
         />
       )
     } else {
@@ -32,6 +36,9 @@ function QueryComponent(props) {
           sameSeason={props.sameSeason}
           handleStatInputChange={props.handleStatInputChange}
           handleCharInputChange={props.handleCharInputChange}
+          statyearval={props.statyearval}
+          statteam={props.statteam}
+
         />
       )
     }

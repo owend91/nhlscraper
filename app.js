@@ -7,6 +7,9 @@ const mongoose = require("mongoose");
 const Player = require('./models/playerModel.js')
 const apiHelper = require('./controllers/ApiHelper.js');
 const cors = require('cors')
+const constants = require('./constants/constants.js')
+
+const allTeams = constants.teamMap;
 
 mongoose.connect(process.env.MONGO_URL, {
   useUnifiedTopology: true,
@@ -76,6 +79,8 @@ app.route("/players?*")
   const otherParams = []
   console.log(req.query);
   let sameSeason = false;
+  let statteam = '';
+  let statseason = '';
   for(const param in req.query){
     if(param.startsWith('team')){
       if(req.query[param].endsWith('ALL')){
@@ -111,6 +116,12 @@ app.route("/players?*")
     } else {
       if(param === 'sameseason'){
         sameSeason = req.query[param] === 'y'? true : false;
+      } else if(param === 'statseason'){
+        statseason = req.query[param];
+        console.log('statseason: ' + statseason);
+      } else if(param === 'statteam'){
+        statteam = req.query[param];
+        console.log('statteam: ' + statteam);
       } else {
         otherParams.push(param);
       }
@@ -132,9 +143,16 @@ app.route("/players?*")
           }  
 
           const returnMap = {};
+          // console.log(`statseason appjs: ${statseason}`)
+          let fullTeamName = '';
+          if(statteam !== ''){
+            console.log('test');
+            fullTeamName = allTeams[statteam];
+          }
+          // console.log('fullTeam: ' + fullTeamName)
           if(sameSeason){
             for(player of foundPlayers){
-              if(apiHelper.statComparatorSameSeason(player, otherParams, req)){
+              if(apiHelper.statComparatorSameSeasonWithTeamSeason(player, otherParams, fullTeamName, statseason, req)){
                 returnMap[player.nhlId] = true;
               }
             }
@@ -147,7 +165,7 @@ app.route("/players?*")
                 for(player of foundPlayers){
                   //loop through seasons
                   let added = false;
-                  if(apiHelper.statComparator(player, param.slice(6), comparator, goalValue)){
+                  if(apiHelper.statComparator(player, param.slice(6), comparator, goalValue, fullTeamName, statseason)){
                     if(firstLoop){
                       returnMap[player.nhlId] = true;
                     }   

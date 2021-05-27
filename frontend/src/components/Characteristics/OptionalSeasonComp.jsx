@@ -1,8 +1,8 @@
-import SeasonComp from "./TeamYearComp"
+import SeasonComp from "../MultiUse/TeamYearComp"
 
 function OptionalSeasonComp(props) {
     if(props.addSeason){
-        return <SeasonComp style={{width: props.width}} idx={props.idx} value={props.value} inputChange={props.inputChange}/>
+        return <SeasonComp name='teamyear' style={{width: props.width}} idx={props.idx} value={props.value} inputChange={props.inputChange}/>
     }
     return '';
   }

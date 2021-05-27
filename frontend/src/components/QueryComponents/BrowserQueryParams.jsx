@@ -1,4 +1,5 @@
 import Characteristic from '../Characteristics/CompleteCharacteristicComp'
+import SeasonStatsHeader from '../Statistics/SeasonStatsHeader'
 import Statistic from '../Statistics/StatisticComp'
 
 function BrowserQueryParams(props) {
@@ -36,13 +37,24 @@ function BrowserQueryParams(props) {
           <div className="col-lg-6">
             {/* <h3>Statistic Parameters</h3> */}
             
-            <div className="row" style={{textAlign: 'center'}}>
+            {/* <div className="row" style={{textAlign: 'center'}}>
             <div className="form-check" onClick={props.updateSeasonCheck}>
               <input className="" type="checkbox" checked={props.sameSeason} id="sameSeasonCheck" name="sameSeasonCheck" />
               <label className="pl-1" for="sameSeasonCheck">
                 Same season
               </label>
             </div>
+            </div> */}
+            <div className="row" style={{textAlign: 'center'}}>
+            <SeasonStatsHeader 
+              sameseason={props.sameseason}
+              updateSeasonCheck={props.updateSeasonCheck}
+              idx={-99}
+              width={'5em'}
+              statyearval={props.statyearval}
+              inputChange={props.handleStatInputChange}
+              statteam={props.statteam}
+            />
             </div>
             {props.statFields.map( (stat, index) => {
               return (

@@ -4,7 +4,7 @@ import ComparatorDropDown from './ComparatorDropDown'
 
 function StatisticComp(props) {
     return (
-          <div className="col-lg-10">
+          <div className="col-lg-12">
             <div className="input-group">
               <StatisticDropDown idx={props.idx} inputChange={props.inputChange}/>
               <ComparatorDropDown idx={props.idx} inputChange={props.inputChange}/>

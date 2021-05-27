@@ -1,4 +1,4 @@
-import TeamComp from './TeamComp'
+import TeamComp from '../MultiUse/TeamComp'
 import PositionComp from './PositionComp'
 import ShootsComp from './ShootsComp'
 import BirthMonthComp from './BirthMonthComp'
@@ -9,7 +9,7 @@ import HomeCountry from './HomeCountry'
 function PartialCharacteristicComp(props) {
 
   if(props.characteristic.startsWith('team')){
-    return <TeamComp style={{width: props.width}} idx={props.idx} value={props.value} inputChange={props.inputChange}/>
+    return <TeamComp name="value" style={{width: props.width}} idx={props.idx} value={props.value} inputChange={props.inputChange}/>
   } else if(props.characteristic === 'position'){
     return <PositionComp style={{width: props.width}} idx={props.idx} value={props.value} inputChange={props.inputChange}/>
   } else if(props.characteristic === 'shoots'){
