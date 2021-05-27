@@ -1,13 +1,10 @@
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
-// import Characteristic from './components/Characteristics/CompleteCharacteristicComp'
-// import Statistic from './components/Statistics/StatisticComp'
 import DataTable from 'react-data-table-component'
 import QueryParams from './components/QueryComponents/QueryComponent'
 
 import PlayerDataService from "./services/players"
 import { useState } from 'react';
-// import {isMobile} from 'react-device-detect';
 
 function App() {
 
@@ -22,13 +19,15 @@ function App() {
 
   const handleAddCharFields = () => {
     const values = [...charFields];
-    values.push({ value: '', characteristic: '' });
+    values.push({ value: '', characteristic: '', teamyear: '' });
     setCharFields(values);
   };
   const handleCharInputChange = (index, event) => {
     const values = [...charFields];
     if (event.target.name === "value") {
       values[index].value = event.target.value;
+    } else if (event.target.name === "teamyear") {
+      values[index].teamyear = event.target.value;
     } else {
       values[index].characteristic = event.target.value;
     }
@@ -81,7 +80,17 @@ function App() {
       let query = "";
       charFields.map(char => {
         if(char.characteristic !== ''){
-          query+= `${char.characteristic}=${char.value.replace(' ', '%20')}&&`;
+          if(char.characteristic.startsWith('team')){
+            if(char.teamyear !== ''){
+              query+= `${char.characteristic}=${char.value}${char.teamyear}&&`;
+            } else {
+              query+= `${char.characteristic}=${char.value}ALL&&`;
+            }
+          } else {
+            query+= `${char.characteristic}=${char.value.replace(' ', '%20')}&&`;
+          }
+          console.log(query);
+          
         }
       });
       statFields.map(stat => {

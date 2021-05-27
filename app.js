@@ -78,7 +78,15 @@ app.route("/players?*")
   let sameSeason = false;
   for(const param in req.query){
     if(param.startsWith('team')){
-      query[`teams.${req.query[param]}`] = {$exists:true};
+      if(req.query[param].endsWith('ALL')){
+        // const team = req.query[param].slice(req.query[param] - 3)
+        query[`teams.${req.query[param].slice(0,req.query[param].length-3)}`] = {$exists:true};
+      } else {
+        const team = req.query[param].slice(0,req.query[param].length-4);
+        const year = req.query[param].slice(req.query[param].length-4);
+        query[`teams.${team}`] = {$all: [year]};
+      }
+      
     } else if(param.toLowerCase() === 'position'){
       query[param.toLowerCase()] = req.query[param].toUpperCase();
     } else if(param.toLowerCase() === 'shoots'){
