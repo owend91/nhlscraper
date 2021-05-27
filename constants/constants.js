@@ -16,7 +16,7 @@ module.exports.teamMap = {
     "penguins": "Pittsburgh Penguins",
     "capitals": "Washington Capitals",
     "hurricanes": "Carolina Hurricanes",
-    "blackhawks": "Carolina Hurricanes",
+    "blackhawks": "Chicago Blackhawks",
     "bluejackets": "Columbus Blue Jackets",
     "stars": "Dallas Stars",
     "redwings": "Detroit Red Wings",
