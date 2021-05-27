@@ -2,6 +2,10 @@
 This scrapes the nhl website to find player data and stores it into a local MongoDB db.
 Now pulls all teams.  Each team is a collection that has a name and an array of Player collections. Each player has a map of teams played for, and an array of years with the team.
 
+The front end is a react app saved in the frontend folder.  This allows you to add parameters that are sent to the API.  The results are shown in a datatable, where the rows can be expanded to show stats.  Add a .env to the frontend folder that contains the API path.
+
+I currently have the API hosted on Heroku, and the React App on netlify.
+
 To populate local MongoDB:
 1. Clone project
 2. Run 'npm install'
@@ -40,7 +44,9 @@ Known Issues:
 
 Next Steps:
   - Include stats for each year (GP, Goals, Assists, Points at a minimum per season) [DONE]
-  - Some sort of front end
-  - Expand API calls
-  - Include overall stats on the main player object
+  - Some sort of front end [BASICS DONE]
+  - Expand API calls 
+  - Include overall stats on the main player object [DONE]
   - Have a flag where stat queries apply to a single season [DONE]
+  - Add career stats to object
+  - Figure out a way to only repopulate a subset of data.  For example, if last season played is a year or two before current year, don't delete and dont run NHL API against.
