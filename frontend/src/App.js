@@ -30,6 +30,7 @@ function App() {
       values[index].teamyear = event.target.value;
     } else {
       values[index].characteristic = event.target.value;
+      values[index].value = "";
     }
     setCharFields(values);
   }; 
