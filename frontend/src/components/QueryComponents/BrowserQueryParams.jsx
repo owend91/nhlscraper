@@ -30,17 +30,6 @@ function BrowserQueryParams(props) {
               <div className="card">
                   <div className="card-body">
                     <h5 className="card-title">Statistic Parameters</h5>
-                    <div className="row pb-2" style={{textAlign: 'center'}}>
-                      <SeasonStatsHeader 
-                        sameseason={props.sameseason}
-                        updateSeasonCheck={props.updateSeasonCheck}
-                        idx={-99}
-                        width={'5em'}
-                        statyearval={props.statyearval}
-                        inputChange={props.handleStatInputChange}
-                        statteam={props.statteam}
-                      />
-                    </div>
                     <div className="row pb-1">
                       <button className="btn btn-outline-primary" onClick={props.handleAddStatFields}> Add Statistic</button>
                     </div>
@@ -53,6 +42,17 @@ function BrowserQueryParams(props) {
                           )
                         })}
                     </div>
+                  </div>
+                  <div className="card-footer bg-transparent">
+                    <SeasonStatsHeader 
+                          sameseason={props.sameseason}
+                          updateSeasonCheck={props.updateSeasonCheck}
+                          idx={-99}
+                          width={'5em'}
+                          statyearval={props.statyearval}
+                          inputChange={props.handleStatInputChange}
+                          statteam={props.statteam}
+                        />
                   </div>
                 </div>
             </div>
