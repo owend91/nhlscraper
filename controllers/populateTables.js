@@ -129,31 +129,50 @@ async function populateDocuments(deleteDocuments) {
   //   console.log("(MAYBE) DONE!");
   //   process.exit(1);
   // }
+  
   const stattedPlayers = await scrape.getPlayerStats(allPlayers)
+  Promise.all(stattedPlayers)
+  .then( players => {
+    for(player of players){
+      player.save(function(err) {
+        if (err) {
+          console.log(err);
+        }
+        console.log(`i: ${i}`)
+        if(i === allPlayers.length - 1){
+          console.log("Done!");
+          process.exit(1);
+        } else {
+          i++;
+        }
+      });
+    }
 
-  for(player of stattedPlayers){
-    // console.log(player.name);
-    // let stats = await nhlApi.getSeasonPlayingStats(player.nhlId, year);
-    // player.stats = stats;
+  });
 
-    // let careerStats = await nhlApi.getCareerPlayingStats(player.nhlId, year);
-    // player.careerStats = careerStats;
+  // for(player of stattedPlayers){
+  //   // console.log(player.name);
+  //   // let stats = await nhlApi.getSeasonPlayingStats(player.nhlId, year);
+  //   // player.stats = stats;
+
+  //   // let careerStats = await nhlApi.getCareerPlayingStats(player.nhlId, year);
+  //   // player.careerStats = careerStats;
    
 
     
-    player.save(function(err) {
-      if (err) {
-        console.log(err);
-      }
-      console.log(`i: ${i}`)
-      if(i === allPlayers.length - 1){
-        console.log("Done!");
-        process.exit(1);
-      } else {
-        i++;
-      }
-    });
-  }
+  //   player.save(function(err) {
+  //     if (err) {
+  //       console.log(err);
+  //     }
+  //     console.log(`i: ${i}`)
+  //     if(i === allPlayers.length - 1){
+  //       console.log("Done!");
+  //       process.exit(1);
+  //     } else {
+  //       i++;
+  //     }
+  //   });
+  // }
 }
 
 const teams = constants.teams
