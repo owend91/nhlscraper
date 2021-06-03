@@ -32,16 +32,29 @@ module.exports.getPlayerStats = async function getPlayerStats(players){
   for (url of urls){
     let playerStats = {}
     let id = url.slice(playerUrl.length);
-    console.log(count)
+    console.log(`${count}: ${id}`)
     await page.setDefaultNavigationTimeout(0);
-    await page.goto(url);
-    const data = await page.evaluate(() => {
-      if(document.querySelector('#careerTable .responsive-datatable__pinned')){
-        return document.querySelector('#careerTable .responsive-datatable__pinned').outerHTML
-      } else {
-        return null;
-      }
-    });
+    page.goto(url) 
+    let pageExists = true;
+    try {
+      await page.waitForSelector('#careerTable .responsive-datatable__pinned', {timeout: 30000});
+    } catch (e) {
+      pageExists = false;
+    }
+    
+    // await page.waitForSelector('#careerTable .responsive-datatable__pinned')
+    console.log(`pageExists: ${pageExists} for ${id}`)
+    let data = null;
+    if(pageExists){
+        data = await page.evaluate(() => {
+        if(document.querySelector('#careerTable .responsive-datatable__pinned')){
+          return document.querySelector('#careerTable .responsive-datatable__pinned').outerHTML
+        } else {
+          return null;
+        }
+      });
+    } 
+
     if(data){
       const $ = cheerio.load(data);
       $('tbody tr').each((i, row) => {
@@ -51,12 +64,15 @@ module.exports.getPlayerStats = async function getPlayerStats(players){
         let stat = {}
         const arr = $('td span', row).slice(0);
         season = $(arr[0]).text().replace('-','')
+        console.log(`Working on season ${season} for ${id}`)
         if(!playerStats[season]){
           playerStats[season] = {}
         }
         team = $(arr[1]).text();
         if(teamShorthandMap[team]){
           team = teamShorthandMap[team];
+          console.log(`Working on team ${team} for ${id}`)
+
           stat['games'] = $(arr[2]).text()
           stat['goals'] = $(arr[3]).text()
           stat['assists'] = $(arr[4]).text() 
@@ -79,7 +95,7 @@ module.exports.getPlayerStats = async function getPlayerStats(players){
 
       let careerStats = {};
       $('tfoot tr').each((i, row) => {
-
+        console.log(`Working on career stats for ${id}`)
         const arr = $('td span', row).slice(0);
         careerStats['games'] = $(arr[2]).text().replace(",","")
         careerStats['goals'] = $(arr[3]).text().replace(",","")
