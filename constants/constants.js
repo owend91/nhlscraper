@@ -5,6 +5,8 @@ module.exports.teams = ['bruins', 'sabres', 'devils', 'islanders', 'rangers',
   'wild', 'sharks', 'blues', 'goldenknights', 'flames', 'oilers',
   'canadiens', 'senators', 'mapleleafs', 'canucks', 'jets'
 ];
+// module.exports.teams = ['capitals'
+// ];
 
 module.exports.teamMap = {
     "bruins": "Boston Bruins",
@@ -38,6 +40,40 @@ module.exports.teamMap = {
     "mapleleafs": "Toronto Maple Leafs",
     "canucks": "Vancouver Canucks",
     "jets": "Winnipeg Jets"
+}
+
+module.exports.firstYearMap = {
+  "bruins": "1924",
+  "sabres": "1970",
+  "devils": "1974",
+  "islanders": "1972",
+  "rangers": "1926",
+  "flyers": "1967",
+  "penguins": "1967",
+  "capitals": "1974",
+  "hurricanes": "1979",
+  "blackhawks": "1926",
+  "bluejackets": "2000",
+  "stars": "1967",
+  "redwings": "1926",
+  "panthers": "1993",
+  "predators": "1998",
+  "lightning": "1992",
+  "ducks": "1993",
+  "coyotes": "1979",
+  "avalanche": "1979",
+  "kings": "1967",
+  "wild": "2000",
+  "sharks": "1991",
+  "blues": "1967",
+  "goldenknights": "2017",
+  "flames": "1972",
+  "oilers": "1979",
+  "canadiens": "1917",
+  "senators": "1992",
+  "mapleleafs": "1917",
+  "canucks": "1970",
+  "jets": "1999"
 }
 
 // module.exports.teams = ['capitals'

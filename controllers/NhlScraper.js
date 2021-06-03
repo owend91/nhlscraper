@@ -1,13 +1,204 @@
 const cheerio = require('cheerio');
 const _ = require('lodash');
 const axios = require('axios');
+const puppeteer = require('puppeteer');
+const nhlApi = require('./NhlApiCalls');
 
 const nhlUrl = "https://www.nhl.com/";
 const years = []
+const playerUrl = "https://www.nhl.com/player/"
 
 populateYears();
 module.exports.getNames = getNames;
 module.exports.getStats = getStats;
+module.exports.getPlayerStats = async function getPlayerStats(players){
+  const urls = [];
+  let returnPlayers = []
+  let playerMap = {}
+  let stats = {}
+  let allCareerStats = {}
+
+
+  for (player of players) {
+    urls.push(playerUrl + player.nhlId);
+    // console.log(playerUrl + player.nhlId)
+    playerMap[player.nhlId] = player;
+  }
+  const browser = await puppeteer.launch({dumpio: false});
+  const [page] = await browser.pages();
+  for (url of urls){
+    let playerStats = {}
+    let id = url.slice(playerUrl.length);
+    console.log(id)
+    await page.goto(url);
+    // const data = await page.evaluate(() => document.querySelector('#careerTable .responsive-datatable__pinned tbody').outerHTML);
+    const data = await page.evaluate(() => document.querySelector('*').outerHTML);
+    // console.log(data);
+    const $ = cheerio.load(data);
+    $('#careerTable .responsive-datatable__pinned tbody').each((i, elem) => {
+      $(elem.children).each((i, child) => {
+        if(child.name && child.name === 'tr'){
+          let season = '';
+          let team = '';
+          let seasonStat = {}
+          let stat = {}
+          let x = 0;
+          $(child.children).each((i, grandchild) => {
+            
+            if(grandchild.name && grandchild.name === 'td'){
+              
+              $(grandchild.children).each((i, greatgrandchild) => {
+                if(greatgrandchild.name && greatgrandchild.name === 'span'){
+                    // console.log($(greatgrandchild).text());
+                    switch(x) {
+                      case 0:
+                        season = $(greatgrandchild).text().replace('-','')
+                        if(!playerStats[season]){
+                          playerStats[season] = {}
+                        }
+                        break;
+                      case 1:
+                        team = $(greatgrandchild).text();
+                        break;
+                      case 2:
+                        stat['games'] = $(greatgrandchild).text()
+                        break;
+                      case 3:
+                        stat['goals'] = $(greatgrandchild).text()
+                        break;       
+                      case 4:
+                        stat['assists'] = $(greatgrandchild).text()        
+                        break;
+                      case 5:
+                        stat['points'] = $(greatgrandchild).text()
+                        break;
+                      case 6:
+                        stat['plusMinus'] = $(greatgrandchild).text()
+                        break;
+                      case 7:
+                        stat['pim'] = $(greatgrandchild).text()
+                        break;
+                      case 8:
+                        stat['powerPlayGoals'] = $(greatgrandchild).text()
+                        break;
+                      case 9:
+                        stat['powerPlayPoints'] = $(greatgrandchild).text()
+                        break;
+                      case 10:
+                        stat['shortHandedGoals'] = $(greatgrandchild).text()
+                        break;
+                      case 11:
+                        stat['shorthandedPoints'] = $(greatgrandchild).text()
+                        break;
+                      case 12:
+                        stat['gameWinningGoals'] = $(greatgrandchild).text()
+                        break;
+                      case 13:
+                        stat['overTimeGoals'] = $(greatgrandchild).text()
+                        break;
+                      case 14:
+                        stat['shots'] = $(greatgrandchild).text()
+                        break;
+                      case 15:
+                        stat['shotPct'] = $(greatgrandchild).text()
+                        break;
+                      case 16:
+                        stat['faceOffPct'] = $(greatgrandchild).text()
+                        playerStats[season][team] = stat;
+                        break;
+                    }
+                    x++;
+                }
+              });
+            }
+          });
+        }
+      });
+    });
+
+    let careerStats = {};
+    $('#careerTable .responsive-datatable__pinned tfoot').each((i, elem) => {
+      $(elem.children).each((i, child) => {
+        let x = 0;
+        if(child.name && child.name === 'tr'){
+          $(child.children).each((i, grandchild) => {
+            
+            if(grandchild.name && grandchild.name === 'td'){
+              
+              $(grandchild.children).each((i, greatgrandchild) => {
+                if(greatgrandchild.name && greatgrandchild.name === 'span'){
+                  switch(x) {
+                    case 0:
+                      break;
+                    case 1:
+                      break;
+                    case 2:
+                      careerStats['games'] = $(greatgrandchild).text().replace(",","");
+                      break;
+                    case 3:
+                      careerStats['goals'] = $(greatgrandchild).text().replace(",","")
+                      break;       
+                    case 4:
+                      careerStats['assists'] = $(greatgrandchild).text().replace(",","")     
+                      break;
+                    case 5:
+                      careerStats['points'] = $(greatgrandchild).text().replace(",","")
+                      break;
+                    case 6:
+                      careerStats['plusMinus'] = $(greatgrandchild).text()
+                      break;
+                    case 7:
+                      careerStats['pim'] = $(greatgrandchild).text().replace(",","")
+                      break;
+                    case 8:
+                      careerStats['powerPlayGoals'] = $(greatgrandchild).text().replace(",","")
+                      break;
+                    case 9:
+                      careerStats['powerPlayPoints'] = $(greatgrandchild).text().replace(",","")
+                      break;
+                    case 10:
+                      careerStats['shortHandedGoals'] = $(greatgrandchild).text().replace(",","")
+                      break;
+                    case 11:
+                      careerStats['shorthandedPoints'] = $(greatgrandchild).text().replace(",","")
+                      break;
+                    case 12:
+                      careerStats['gameWinningGoals'] = $(greatgrandchild).text().replace(",","")
+                      break;
+                    case 13:
+                      careerStats['overTimeGoals'] = $(greatgrandchild).text().replace(",","")
+                      break;
+                    case 14:
+                      careerStats['shots'] = $(greatgrandchild).text().replace(",","")
+                      break;
+                    case 15:
+                      careerStats['shotPct'] = $(greatgrandchild).text()
+                      break;
+                    case 16:
+                      careerStats['faceOffPct'] = $(greatgrandchild).text()
+                      break;
+                  }
+                  x++;
+                }
+              });
+            }
+          });
+        }
+      });
+    });
+     stats[id] = playerStats;
+     allCareerStats[id] = careerStats;
+    
+  }
+  console.log(stats);
+  for(player of players){
+    player.stats = stats[player.nhlId]
+    player.careerStats = allCareerStats[player.nhlId]
+    returnPlayers.push(player)
+  }
+  return returnPlayers;
+}
+
 module.exports.createPlayerObjects = function createPlayerObjects(team){
   const teamUrl = nhlUrl + team + '/roster/';
   const urls = [];
@@ -20,10 +211,11 @@ module.exports.createPlayerObjects = function createPlayerObjects(team){
   let promiseArray = urls.map(url => (axios.get(url).catch(error => console.log('Invalid year: ' + url.slice(url.length-4)))));
   return Promise.all(promiseArray)
     .then(
-      results => {
+       results => {
         let thisYearNames = [];
         let thisYearNhlIds = [];
         for (result of results) {
+          
           if (result) {
             let currYear = result.config.url.slice(result.config.url.length -4);
             console.log("Current Year: " + currYear);
@@ -193,6 +385,8 @@ function populateYears() {
     currYear--;
     years.push('' + currYear);
   }
+
+
 
   // console.log(years);
 }

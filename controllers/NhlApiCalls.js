@@ -2,12 +2,14 @@ const cheerio = require('cheerio');
 const _ = require('lodash');
 const axios = require('axios');
 
-const urlPrefix = "https://statsapi.web.nhl.com/api/v1/people/"
-const urlEnd = "/stats?stats=yearByYear";
+const urlPrefix = "http://statsapi.web.nhl.com/api/v1/people/"
+const urlSeasonEnd = "/stats?stats=yearByYear";
+const urlCareerEnd = "/stats?stats=careerRegularSeason";
 
-module.exports.getPlayingStats = async function getPlayingStats(id){
+
+module.exports.getSeasonPlayingStats = async function getSeasonPlayingStats(id){
     let stats = {}
-    const fullUrl = urlPrefix + id + urlEnd;
+    const fullUrl = urlPrefix + id + urlSeasonEnd;
     // console.log(fullUrl);
     try {
         const data = await axios.get(fullUrl);
@@ -23,7 +25,30 @@ module.exports.getPlayingStats = async function getPlayingStats(id){
         }
         return stats;
     } catch(err){
-        console.log(`API did not return stats for ${id}`);
+        if(err.response){
+            console.log(`API did not return season stats for ${id}: `);
+        } else {
+            console.log(`API did not return season stats for ${id}: `, err);
+        }
+        return stats;
+    }
+}
+
+module.exports.getCareerPlayingStats = async function getCareerPlayingStats(id){
+    let stats = {}
+    const fullUrl = urlPrefix + id + urlCareerEnd;
+    // console.log(fullUrl);
+    try {
+        const data = await axios.get(fullUrl);
+        // console.log(data.data.stats[0].splits[0].stat);
+        if(data.data.stats[0].splits[0]){
+            stats = data.data.stats[0].splits[0].stat
+        } else {
+            console.log(`API did not return career stats for ${id} : empty stats`);
+        }
+        return stats;
+    } catch(err){
+        console.log(`API did not return career stats for ${id} : `, err);
         return stats;
     }
 }
