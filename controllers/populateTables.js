@@ -134,6 +134,7 @@ async function populateDocuments(deleteDocuments) {
   Promise.all(stattedPlayers)
   .then( players => {
     for(player of players){
+      // console.log('saving: ', player)
       player.save(function(err) {
         if (err) {
           console.log(err);

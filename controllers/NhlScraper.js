@@ -10,6 +10,7 @@ const years = []
 const playerUrl = "https://www.nhl.com/player/"
 
 const firstYearMap = constants.firstYearMap;
+const teamShorthandMap = constants.teamShorthandMap;
 
 populateYears();
 module.exports.getNames = getNames;
@@ -32,62 +33,78 @@ module.exports.getPlayerStats = async function getPlayerStats(players){
     let playerStats = {}
     let id = url.slice(playerUrl.length);
     console.log(count)
+    await page.setDefaultNavigationTimeout(0);
     await page.goto(url);
-    const data = await page.evaluate(() => document.querySelector('#careerTable .responsive-datatable__pinned').outerHTML);
-    const $ = cheerio.load(data);
-    $('tbody tr').each((i, row) => {
-      let season = '';
-      let team = '';
-      let seasonStat = {}
-      let stat = {}
-      const arr = $('td span', row).slice(0);
-      season = $(arr[0]).text().replace('-','')
-      if(!playerStats[season]){
-        playerStats[season] = {}
+    const data = await page.evaluate(() => {
+      if(document.querySelector('#careerTable .responsive-datatable__pinned')){
+        return document.querySelector('#careerTable .responsive-datatable__pinned').outerHTML
+      } else {
+        return null;
       }
-      team = $(arr[1]).text();
-      stat['games'] = $(arr[2]).text()
-      stat['goals'] = $(arr[3]).text()
-      stat['assists'] = $(arr[4]).text() 
-      stat['points'] = $(arr[5]).text()
-      stat['plusMinus'] = $(arr[6]).text()
-      stat['pim'] = $(arr[7]).text()
-      stat['powerPlayGoals'] = $(arr[8]).text()
-      stat['powerPlayPoints'] = $(arr[9]).text()
-      stat['shortHandedGoals'] = $(arr[10]).text()
-      stat['shorthandedPoints'] = $(arr[11]).text()
-      stat['gameWinningGoals'] = $(arr[12]).text()
-      stat['overTimeGoals'] = $(arr[13]).text()
-      stat['shots'] = $(arr[14]).text()
-      stat['shotPct'] = $(arr[15]).text()
-      stat['faceOffPct'] = $(arr[16]).text()
-      playerStats[season][team] = stat;
     });
+    if(data){
+      const $ = cheerio.load(data);
+      $('tbody tr').each((i, row) => {
+        let season = '';
+        let team = '';
+        let seasonStat = {}
+        let stat = {}
+        const arr = $('td span', row).slice(0);
+        season = $(arr[0]).text().replace('-','')
+        if(!playerStats[season]){
+          playerStats[season] = {}
+        }
+        team = $(arr[1]).text();
+        if(teamShorthandMap[team]){
+          team = teamShorthandMap[team];
+          stat['games'] = $(arr[2]).text()
+          stat['goals'] = $(arr[3]).text()
+          stat['assists'] = $(arr[4]).text() 
+          stat['points'] = $(arr[5]).text()
+          stat['plusMinus'] = $(arr[6]).text()
+          stat['pim'] = $(arr[7]).text()
+          stat['powerPlayGoals'] = $(arr[8]).text()
+          stat['powerPlayPoints'] = $(arr[9]).text()
+          stat['shortHandedGoals'] = $(arr[10]).text()
+          stat['shorthandedPoints'] = $(arr[11]).text()
+          stat['gameWinningGoals'] = $(arr[12]).text()
+          stat['overTimeGoals'] = $(arr[13]).text()
+          stat['shots'] = $(arr[14]).text()
+          stat['shotPct'] = $(arr[15]).text()
+          stat['faceOffPct'] = $(arr[16]).text()
+          playerStats[season][team] = stat;
+        }
+       
+      });
 
-    let careerStats = {};
-    $('tfoot tr').each((i, row) => {
+      let careerStats = {};
+      $('tfoot tr').each((i, row) => {
 
-      const arr = $('td span', row).slice(0);
-      careerStats['games'] = $(arr[2]).text().replace(",","")
-      careerStats['goals'] = $(arr[3]).text().replace(",","")
-      careerStats['assists'] = $(arr[4]).text().replace(",","")
-      careerStats['points'] = $(arr[5]).text().replace(",","")
-      careerStats['plusMinus'] = $(arr[6]).text().replace(",","")
-      careerStats['pim'] = $(arr[7]).text().replace(",","")
-      careerStats['powerPlayGoals'] = $(arr[8]).text().replace(",","")
-      careerStats['powerPlayPoints'] = $(arr[9]).text().replace(",","")
-      careerStats['shortHandedGoals'] = $(arr[10]).text().replace(",","")
-      careerStats['shorthandedPoints'] = $(arr[11]).text().replace(",","")
-      careerStats['gameWinningGoals'] = $(arr[12]).text().replace(",","")
-      careerStats['overTimeGoals'] = $(arr[13]).text().replace(",","")
-      careerStats['shots'] = $(arr[14]).text().replace(",","")
-      careerStats['shotPct'] = $(arr[15]).text().replace(",","")
-      careerStats['faceOffPct'] = $(arr[16]).text().replace(",","")
-    });
-    stats[id] = playerStats;
-    allCareerStats[id] = careerStats;
+        const arr = $('td span', row).slice(0);
+        careerStats['games'] = $(arr[2]).text().replace(",","")
+        careerStats['goals'] = $(arr[3]).text().replace(",","")
+        careerStats['assists'] = $(arr[4]).text().replace(",","")
+        careerStats['points'] = $(arr[5]).text().replace(",","")
+        careerStats['plusMinus'] = $(arr[6]).text().replace(",","")
+        careerStats['pim'] = $(arr[7]).text().replace(",","")
+        careerStats['powerPlayGoals'] = $(arr[8]).text().replace(",","")
+        careerStats['powerPlayPoints'] = $(arr[9]).text().replace(",","")
+        careerStats['shortHandedGoals'] = $(arr[10]).text().replace(",","")
+        careerStats['shorthandedPoints'] = $(arr[11]).text().replace(",","")
+        careerStats['gameWinningGoals'] = $(arr[12]).text().replace(",","")
+        careerStats['overTimeGoals'] = $(arr[13]).text().replace(",","")
+        careerStats['shots'] = $(arr[14]).text().replace(",","")
+        careerStats['shotPct'] = $(arr[15]).text().replace(",","")
+        careerStats['faceOffPct'] = $(arr[16]).text().replace(",","")
+      });
+      stats[id] = playerStats;
+      allCareerStats[id] = careerStats;
+      count++;
+  } else {
+    stats[id] = {};
+    allCareerStats[id] = {};
     count++;
-    
+  } 
   }
   for(player of players){
     player.stats = stats[player.nhlId]
@@ -103,6 +120,9 @@ module.exports.createPlayerObjects = function createPlayerObjects(team){
   let returnPlayers = []
 
   for (year of years) {
+    if(year < firstYearMap[team]){
+      break;
+    }
     urls.push(teamUrl + year);
   }
 

@@ -42,6 +42,40 @@ module.exports.teamMap = {
     "jets": "Winnipeg Jets"
 }
 
+module.exports.teamShorthandMap = {
+  "BOS": "Boston Bruins",
+  "BUF": "Buffalo Sabres",
+  "NJD": "New Jersey Devils",
+  "NYI": "New York Islanders",
+  "NYR": "New York Rangers",
+  "PHI": "Philadelphia Flyers",
+  "PIT": "Pittsburgh Penguins",
+  "WSH": "Washington Capitals",
+  "CAR": "Carolina Hurricanes",
+  "CHI": "Chicago Blackhawks",
+  "CBJ": "Columbus Blue Jackets",
+  "DAL": "Dallas Stars",
+  "DET": "Detroit Red Wings",
+  "FLA": "Florida Panthers",
+  "NSH": "Nashville Predators",
+  "TBL": "Tampa Bay Lightning",
+  "ANA": "Anaheim Ducks",
+  "ARI": "Arizona Coyotes",
+  "COL": "Colorado Avalanche",
+  "LAK": "Los Angeles Kings",
+  "MIN": "Minnesota Wild",
+  "SJS": "San Jose Sharks",
+  "STL": "St Louis Blues",
+  "VGK": "Vegas Golden Knights",
+  "CGY": "Calgary Flames",
+  "EDM": "Edmonton Oilers",
+  "MTL": "Montréal Canadiens",
+  "OTT": "Ottawa Senators",
+  "TOR": "Toronto Maple Leafs",
+  "VAN": "Vancouver Canucks",
+  "WPG": "Winnipeg Jets"
+}
+
 module.exports.firstYearMap = {
   "bruins": "1924",
   "sabres": "1970",

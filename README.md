@@ -40,6 +40,7 @@ Known Issues:
   - Birthdate is stored twice (for example Nick Backstroms birthdate is  "11/23/87Nov 23,1987") [FIXED]
   - The data is only current (for example, Braden Holtby was number 70 with the Capitals, he is now number 49 with Vancouver. 49 is stored in the database)
   - 14 players do not return stats from the NHL API
+  - Turns out the NHL API was silently rejecting some calls.  To get all stats, the populateTables.js will scrape the NHL stats career stats table.  This has to be done after render, so Puppeteer is being used.  This does make the repopulation of the table take a long time now.
 
 
 Next Steps:
@@ -48,5 +49,6 @@ Next Steps:
   - Expand API calls 
   - Include overall stats on the main player object [DONE]
   - Have a flag where stat queries apply to a single season [DONE]
-  - Add career stats to object
+  - Add career stats to object [DONE]
+  - Add career stats to front end
   - Figure out a way to only repopulate a subset of data.  For example, if last season played is a year or two before current year, don't delete and dont run NHL API against.
