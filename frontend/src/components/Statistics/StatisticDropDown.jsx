@@ -6,7 +6,7 @@ function StatisticDropDown(props) {
         <option value="seasonassists">Assists</option>
         <option value="seasonpoints">Points</option>
         <option value="seasonpim">PIM</option>
-        <option value="seasongshots">Shots</option>
+        <option value="seasonshots">Shots</option>
         <option value="seasongames">Games Played</option>
     </select>
     );
