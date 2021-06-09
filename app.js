@@ -8,7 +8,7 @@ const Player = require('./models/playerModel.js')
 const apiHelper = require('./controllers/ApiHelper.js');
 const cors = require('cors')
 const constants = require('./constants/constants.js');
-const { isArguments } = require('lodash');
+const { isArguments, intersection } = require('lodash');
 
 const allTeams = constants.teamMap;
 
@@ -139,16 +139,57 @@ app.route("/players?*")
       const stat = param.slice(6);
       const compareValue = parseInt(req.query[param].slice(2));
       const comparator = req.query[param].slice(0,2);
+      console.log(`stat: ${stat} comparator: ${comparator}`)
       if(comparator.toLowerCase() === 'gt'){
-        careerParams.push({$gt : [{ $toInt: `$careerStats.${stat}` }, compareValue]})
+        careerParams.push(
+          {$gt : [
+            { $convert: {
+              input: `$careerStats.${stat}`,
+              to: 'int',
+              onError: 0,
+              onNull: 0
+            } }, 
+            compareValue]})
       } else if(comparator.toLowerCase() === 'lt'){
-        careerParams.push({$lt : [{ $toInt: `$careerStats.${stat}` }, compareValue]})
+        careerParams.push(
+          {$lt : [
+            { $convert: {
+              input: `$careerStats.${stat}`,
+              to: 'int',
+              onError: 0,
+              onNull: 0
+            } }, 
+            compareValue]})
       } else if(comparator.toLowerCase() === 'eq'){
-        careerParams.push({$eq : [{ $toInt: `$careerStats.${stat}` }, compareValue]})
+        careerParams.push(
+          {$eq : [
+            { $convert: {
+              input: `$careerStats.${stat}`,
+              to: 'int',
+              onError: 0,
+              onNull: 0
+            } }, 
+            compareValue]})
       } else if(comparator.toLowerCase() === 'ge'){
-        careerParams.push({$gte : [{ $toInt: `$careerStats.${stat}` }, compareValue]})
+        careerParams.push(
+          {$gte : [
+            { $convert: {
+              input: `$careerStats.${stat}`,
+              to: 'int',
+              onError: 0,
+              onNull: 0
+            } }, 
+            compareValue]})
       } else if(comparator.toLowerCase() === 'le'){
-        careerParams.push({$lte : [{ $toInt: `$careerStats.${stat}` }, compareValue]})
+        careerParams.push(
+          {$lte : [
+            { $convert: {
+              input: `$careerStats.${stat}`,
+              to: 'int',
+              onError: 0,
+              onNull: 0
+            } }, 
+            compareValue]})
       }
     }
     query[`$expr`] = {$and: careerParams}
@@ -157,9 +198,11 @@ app.route("/players?*")
   const foundPlayers = Player.find(query, function(err, foundPlayers) {
 
     if (err) {
+      console.log(err)
+
       res.send(err);
     } else {
-      // console.log('foundPLayers: ', foundPlayers)
+      console.log('foundPLayers: ', foundPlayers)
 
         console.log('hello')
         if(otherSeasonParams.length === 0){
