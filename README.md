@@ -25,7 +25,7 @@ Current Data Stored:
   - Birthdate
   - Hometown
   - Years (these are the seasons the player was on the team.  The year recorded is the first of the season.  For example the 2020-2021 season is recorded as 2020)
-  - Stats (NEW! This is being pulled from the NHL API). This is being pulled by season, per team. For example, Anthony Mantha traded to the Capitals from the Red Wings will have two stat objects for the 20202021 season.
+  - Stats (NEW! This is being pulled from the NHL API). This is being pulled by season, per team. For example, Anthony Mantha traded to the Capitals from the Red Wings will have two stat objects for the 20202021 season. (This is no longer being pulled from the API.  The API was silently rejecting calls every so often, so I wasn't getting all of the stats.  I am now using puppeteer to scrape from the nhl stats table to get both season and career stats)
 
 Currently Working On:
   - API calls
@@ -45,10 +45,11 @@ Known Issues:
 
 Next Steps:
   - Include stats for each year (GP, Goals, Assists, Points at a minimum per season) [DONE]
-  - Some sort of front end [BASICS DONE]
-  - Expand API calls 
+  - Some sort of front end [DONE]
+  - Expand API calls [DONE]
   - Include overall stats on the main player object [DONE]
   - Have a flag where stat queries apply to a single season [DONE]
   - Add career stats to object [DONE]
-  - Add career stats to front end
+  - Add career stats to front end [DONE]
+  - Add goalie stats to be queryable
   - Figure out a way to only repopulate a subset of data.  For example, if last season played is a year or two before current year, don't delete and dont run NHL API against.
