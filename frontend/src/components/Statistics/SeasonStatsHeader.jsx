@@ -3,7 +3,7 @@ import SeasonComp from "../MultiUse/TeamYearComp"
 
 function SeasonStatsHeader(props) {
     return (
-      <div className="input-group">
+      <div className="input-group" style={{flexWrap: 'nowrap'}}>
             <div className="form-check" style={{paddingRight: '1rem'}}>
               <input onClick={props.updateSeasonCheck} className="" type="checkbox" checked={props.sameseason} id="sameSeasonCheck" name="sameSeasonCheck" />
               <label className="pl-1" for="sameSeasonCheck">

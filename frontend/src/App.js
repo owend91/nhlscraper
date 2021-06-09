@@ -20,6 +20,9 @@ function App() {
   const [statFields, setStatFields] = useState([
    
   ]);
+  const [careerStatFields, setCareerStatFields] = useState([
+   
+  ]);
   const [players, setPlayers] = useState([]);
 
   const handleAddCharFields = () => {
@@ -51,6 +54,13 @@ function App() {
     values.push({ value: '', statistic: '', comparator: 'gt' });
     setStatFields(values);
   };
+
+  const handleAddCareerStatFields = () => {
+    const values = [...careerStatFields];
+    values.push({ value: '', statistic: '', comparator: 'gt' });
+    setCareerStatFields(values);
+  };
+
   const handleStatInputChange = (index, event) => {
     const values = [...statFields];
     if (event.target.name === "statvalue") {
@@ -67,13 +77,32 @@ function App() {
     } else if(event.target.name === "statteam"){
       setStatTeam(event.target.value);
     }
-    
+  }; 
+
+  const handleCareerStatInputChange = (index, event) => {
+    const values = [...careerStatFields];
+    if (event.target.name === "statvalue") {
+      values[index].value = event.target.value;
+      setCareerStatFields(values);
+    } else if(event.target.name === "statistic"){
+      values[index].statistic = event.target.value;
+      setCareerStatFields(values);
+    } else if(event.target.name === "comparator"){
+      values[index].comparator = event.target.value;
+      setCareerStatFields(values);
+    } 
   }; 
   
   const handleRemoveStatFields = index => {
     const values = [...statFields];
     values.splice(index, 1);
     setStatFields(values);
+  };
+
+  const handleRemoveCareerStatFields = index => {
+    const values = [...careerStatFields];
+    values.splice(index, 1);
+    setCareerStatFields(values);
   };
 
   function updateSeasonCheck(){
@@ -85,7 +114,7 @@ function App() {
   }
 
   function submitQuery() {
-    if(charFields.length === 0 && statFields.length === 0){
+    if(charFields.length === 0 && statFields.length === 0 && careerStatFields.length === 0){
       PlayerDataService.getAll()
       .then(response => {
         console.log(response.data);
@@ -111,6 +140,13 @@ function App() {
           }
           console.log(query);
           
+        }
+      });
+      console.log('careerStatFields: ', careerStatFields)
+      careerStatFields.map(stat => {
+        if(stat.statistic !== ''){
+          console.log(`career stat: ${stat.statistic}`)
+          query+= `${stat.statistic}=${stat.comparator}${stat.value}&&`;
         }
       });
       statFields.map(stat => {
@@ -143,6 +179,7 @@ function App() {
       } else {
         query = query.slice(0,query.length-2);
       }
+
     PlayerDataService.find(query)
       .then(response => {
         console.log(response.data);
@@ -185,46 +222,49 @@ function App() {
       selector: 'shoots',
       sortable: true,
     },
-    {
-      name: 'Number',
-      selector: 'number',
-      sortable: true,
-    },
   ];
   return (
     <div className="App">
-      <div className="container">
+      {/* <div className="container"> */}
         <form onSubmit={preventFormSubmit}>
         <QueryParams 
           handleAddCharFields={handleAddCharFields} 
           handleAddStatFields={handleAddStatFields}
+          handleAddCareerStatFields={handleAddCareerStatFields}
           handleRemoveCharFields={handleRemoveCharFields}
           handleRemoveStatFields={handleRemoveStatFields}
+          handleRemoveCareerStatFields={handleRemoveCareerStatFields}
           updateSeasonCheck={updateSeasonCheck}
           statFields={statFields}
+          careerStatFields={careerStatFields}
           charFields={charFields}
           sameSeason={sameSeason}
           handleStatInputChange={handleStatInputChange}
+          handleCareerStatInputChange={handleCareerStatInputChange}
           handleCharInputChange={handleCharInputChange}
           statyearval={statYear}
         />
+        <div className='container'>
           <div className="row pt-2 pb-4">
             <button onClick={submitQuery} className='btn btn-outline-success'>Submit</button>
           </div>
+          </div>
         </form>
-        <div className="row">
-            <DataTable
-              title="Players"
-              columns={columns}
-              data={players}
-              pagination={true}
-              expandableRows
-              expandableRowsComponent={<CustomStatDisplay />}
-              noHeader={true}
-              dense
-          />
+        <div className='container'>
+          <div className="row">
+              <DataTable
+                title="Players"
+                columns={columns}
+                data={players}
+                pagination={true}
+                expandableRows
+                expandableRowsComponent={<CustomStatDisplay />}
+                noHeader={true}
+                dense
+            />
+          </div>
         </div>
-      </div>
+      {/* </div> */}
     </div>
   );
 }

@@ -2,7 +2,7 @@
 function TeamComp(props) {
     return (
                 <select style={{width: props.width}} name={props.name} value={props.value} className="form-select" aria-label="Default select example" onChange={event => props.inputChange(props.idx, event)}>
-                  <option value='' selected>Select Team</option>
+                  <option value='' selected>Team</option>
                   <option value="avalanche">Avalanche</option>
                   <option value="blackhawks">Blackhawks</option>
                   <option value="bluejackets">Blue Jackets</option>

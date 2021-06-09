@@ -4,6 +4,7 @@ const axios = require('axios');
 const puppeteer = require('puppeteer');
 const nhlApi = require('./NhlApiCalls');
 const constants = require('../constants/constants');
+const e = require('express');
 
 const nhlUrl = "https://www.nhl.com/";
 const years = []
@@ -20,10 +21,12 @@ module.exports.getPlayerStats = async function getPlayerStats(players){
   let returnPlayers = []
   let stats = {}
   let allCareerStats = {}
+  let playerPositions = {}
 
 
   for (player of players) {
     urls.push(playerUrl + player.nhlId);
+    playerPositions[player.nhlId] = player.position
     // console.log(playerUrl + player.nhlId)
   }
   const browser = await puppeteer.launch({dumpio: false});
@@ -72,22 +75,39 @@ module.exports.getPlayerStats = async function getPlayerStats(players){
         if(teamShorthandMap[team]){
           team = teamShorthandMap[team];
           console.log(`Working on team ${team} for ${id}`)
+          if(playerPositions[id] === 'G'){
+            stat['games'] = $(arr[2]).text()
+            stat['gamesStarted'] = $(arr[3]).text()
+            stat['wins'] = $(arr[4]).text() 
+            stat['losses'] = $(arr[5]).text()
+            stat['ties'] = $(arr[6]).text()
+            stat['overtimeLosses'] = $(arr[7]).text()
+            stat['shotsAgainst'] = $(arr[8]).text()
+            stat['goalsAgainst'] = $(arr[9]).text()
+            stat['goalsAgainstAverage'] = $(arr[10]).text()
+            stat['saves']= $(arr[11]).text()
+            stat['savePercentage'] = $(arr[12]).text()
+            stat['shutouts'] = $(arr[13]).text()
+            stat['minutes'] = $(arr[14]).text()
+          } else {
+            stat['games'] = $(arr[2]).text()
+            stat['goals'] = $(arr[3]).text()
+            stat['assists'] = $(arr[4]).text() 
+            stat['points'] = $(arr[5]).text()
+            stat['plusMinus'] = $(arr[6]).text()
+            stat['pim'] = $(arr[7]).text()
+            stat['powerPlayGoals'] = $(arr[8]).text()
+            stat['powerPlayPoints'] = $(arr[9]).text()
+            stat['shortHandedGoals'] = $(arr[10]).text()
+            stat['shorthandedPoints'] = $(arr[11]).text()
+            stat['gameWinningGoals'] = $(arr[12]).text()
+            stat['overTimeGoals'] = $(arr[13]).text()
+            stat['shots'] = $(arr[14]).text()
+            stat['shotPct'] = $(arr[15]).text()
+            stat['faceOffPct'] = $(arr[16]).text()
+          }
 
-          stat['games'] = $(arr[2]).text()
-          stat['goals'] = $(arr[3]).text()
-          stat['assists'] = $(arr[4]).text() 
-          stat['points'] = $(arr[5]).text()
-          stat['plusMinus'] = $(arr[6]).text()
-          stat['pim'] = $(arr[7]).text()
-          stat['powerPlayGoals'] = $(arr[8]).text()
-          stat['powerPlayPoints'] = $(arr[9]).text()
-          stat['shortHandedGoals'] = $(arr[10]).text()
-          stat['shorthandedPoints'] = $(arr[11]).text()
-          stat['gameWinningGoals'] = $(arr[12]).text()
-          stat['overTimeGoals'] = $(arr[13]).text()
-          stat['shots'] = $(arr[14]).text()
-          stat['shotPct'] = $(arr[15]).text()
-          stat['faceOffPct'] = $(arr[16]).text()
+
           playerStats[season][team] = stat;
         }
        
@@ -97,21 +117,37 @@ module.exports.getPlayerStats = async function getPlayerStats(players){
       $('tfoot tr').each((i, row) => {
         console.log(`Working on career stats for ${id}`)
         const arr = $('td span', row).slice(0);
-        careerStats['games'] = $(arr[2]).text().replace(",","")
-        careerStats['goals'] = $(arr[3]).text().replace(",","")
-        careerStats['assists'] = $(arr[4]).text().replace(",","")
-        careerStats['points'] = $(arr[5]).text().replace(",","")
-        careerStats['plusMinus'] = $(arr[6]).text().replace(",","")
-        careerStats['pim'] = $(arr[7]).text().replace(",","")
-        careerStats['powerPlayGoals'] = $(arr[8]).text().replace(",","")
-        careerStats['powerPlayPoints'] = $(arr[9]).text().replace(",","")
-        careerStats['shortHandedGoals'] = $(arr[10]).text().replace(",","")
-        careerStats['shorthandedPoints'] = $(arr[11]).text().replace(",","")
-        careerStats['gameWinningGoals'] = $(arr[12]).text().replace(",","")
-        careerStats['overTimeGoals'] = $(arr[13]).text().replace(",","")
-        careerStats['shots'] = $(arr[14]).text().replace(",","")
-        careerStats['shotPct'] = $(arr[15]).text().replace(",","")
-        careerStats['faceOffPct'] = $(arr[16]).text().replace(",","")
+        if(playerPositions[id] === 'G'){
+          careerStats['games'] = $(arr[2]).text().replace(",","")
+          careerStats['gamesStarted'] = $(arr[3]).text().replace(",","")
+          careerStats['wins'] = $(arr[4]).text().replace(",","")
+          careerStats['losses'] = $(arr[5]).text().replace(",","")
+          careerStats['ties'] = $(arr[6]).text().replace(",","")
+          careerStats['overtimeLosses'] = $(arr[7]).text().replace(",","")
+          careerStats['shotsAgainst'] = $(arr[8]).text().replace(",","")
+          careerStats['goalsAgainst'] = $(arr[9]).text().replace(",","")
+          careerStats['goalsAgainstAverage'] = $(arr[10]).text().replace(",","")
+          careerStats['saves']= $(arr[11]).text().replace(",","")
+          careerStats['savePercentage'] = $(arr[12]).text().replace(",","")
+          careerStats['shutouts'] = $(arr[13]).text().replace(",","")
+          careerStats['minutes'] = $(arr[14]).text().replace(",","")
+        } else {
+          careerStats['games'] = $(arr[2]).text().replace(",","")
+          careerStats['goals'] = $(arr[3]).text().replace(",","")
+          careerStats['assists'] = $(arr[4]).text().replace(",","")
+          careerStats['points'] = $(arr[5]).text().replace(",","")
+          careerStats['plusMinus'] = $(arr[6]).text().replace(",","")
+          careerStats['pim'] = $(arr[7]).text().replace(",","")
+          careerStats['powerPlayGoals'] = $(arr[8]).text().replace(",","")
+          careerStats['powerPlayPoints'] = $(arr[9]).text().replace(",","")
+          careerStats['shortHandedGoals'] = $(arr[10]).text().replace(",","")
+          careerStats['shorthandedPoints'] = $(arr[11]).text().replace(",","")
+          careerStats['gameWinningGoals'] = $(arr[12]).text().replace(",","")
+          careerStats['overTimeGoals'] = $(arr[13]).text().replace(",","")
+          careerStats['shots'] = $(arr[14]).text().replace(",","")
+          careerStats['shotPct'] = $(arr[15]).text().replace(",","")
+          careerStats['faceOffPct'] = $(arr[16]).text().replace(",","")
+        }
       });
       stats[id] = playerStats;
       allCareerStats[id] = careerStats;

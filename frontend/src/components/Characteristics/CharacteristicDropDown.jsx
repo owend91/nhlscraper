@@ -5,7 +5,7 @@ function CharacteristicDropDown(props) {
         <option value={'team'+props.idx}>Team</option>
         <option value="position">Position</option>
         <option value="shoots">Shoots</option>
-        <option value="number">Number</option>
+        {/* <option value="number">Number</option> */}
         <option value="name">Name</option>
         <option value="birthmonth">Birth Month</option>
         <option value="weight">Weight</option>

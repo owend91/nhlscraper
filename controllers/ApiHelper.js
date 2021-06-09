@@ -7,7 +7,7 @@ module.exports.statComparator = function statComparator(player, stat, comparator
           //loop through teams
           let goalCount = 0;
           for (const [team, stats] of Object.entries(season)) {
-            console.log('team: ' + team + '; inputTeam: ' + inputTeam);
+            // console.log('team: ' + team + '; inputTeam: ' + inputTeam);
             if(team !== inputTeam && inputTeam !== ''){ continue; }
             goalCount += parseInt(stats[stat]);
              if(compareTo(comparator, goalCount, value1)){
@@ -15,6 +15,12 @@ module.exports.statComparator = function statComparator(player, stat, comparator
             }
           }
       }
+}
+
+module.exports.careerStatComparator = function careerStatComparator(player, stat, comparator, compareValue) {
+  console.log(player)
+  console.log(`stat: ${stat}  player.stat: ${player.careerStats.get(stat)}  compareVal: ${compareValue}`)
+  return compareTo(comparator, player.careerStats.get(stat), compareValue)
 }
 
 module.exports.statComparatorSameSeason = function statComparatorSameSeason(player, otherParams, req) {
@@ -92,12 +98,15 @@ return false;
 
 
 function compareTo(comparator, value1, value2){
+  
     if(comparator.toLowerCase() === 'gt'){
+      console.log(`value1: ${value1} value2: ${value2} comparison: ${value1 > value2}`)
       return value1 > value2;
     } else if(comparator.toLowerCase() === 'lt'){
       return value1 < value2;
     } else if(comparator.toLowerCase() === 'eq'){
-      return value1 === value2;
+      console.log(`value1: ${value1} value2: ${value2} comparison: ${value1 == value2}`)
+      return value1 == value2;
     } else if(comparator.toLowerCase() === 'ge'){
       return value1 >= value2;
     } else if(comparator.toLowerCase() === 'le'){

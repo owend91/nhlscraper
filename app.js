@@ -7,7 +7,8 @@ const mongoose = require("mongoose");
 const Player = require('./models/playerModel.js')
 const apiHelper = require('./controllers/ApiHelper.js');
 const cors = require('cors')
-const constants = require('./constants/constants.js')
+const constants = require('./constants/constants.js');
+const { isArguments } = require('lodash');
 
 const allTeams = constants.teamMap;
 
@@ -76,7 +77,9 @@ app.route("/playersOnTeams?*")
 app.route("/players?*")
 .get(function(req, res) {
   const query = {};
-  const otherParams = []
+  const otherSeasonParams = []
+  const otherCareerParams = []
+
   console.log(req.query);
   let sameSeason = false;
   let statteam = '';
@@ -122,27 +125,51 @@ app.route("/players?*")
       } else if(param === 'statteam'){
         statteam = req.query[param];
         console.log('statteam: ' + statteam);
+      } else if(param.startsWith('season')){
+        otherSeasonParams.push(param);
       } else {
-        otherParams.push(param);
+        otherCareerParams.push(param);
       }
     }
   }
-  console.log(otherParams);
+
+  for(param of otherCareerParams) {
+    const stat = param.slice(6);
+    const compareValue = parseInt(req.query[param].slice(2));
+    const comparator = req.query[param].slice(0,2);
+    if(comparator.toLowerCase() === 'gt'){
+      query[`$expr`] = {$gt : [{ $toInt: `$careerStats.${stat}` }, compareValue]}
+    } else if(comparator.toLowerCase() === 'lt'){
+      query[`$expr`] = {$lt : [{ $toInt: `$careerStats.${stat}` }, compareValue]}
+    } else if(comparator.toLowerCase() === 'eq'){
+      query[`$expr`] = {$eq : [{ $toInt: `$careerStats.${stat}` }, compareValue]}
+    } else if(comparator.toLowerCase() === 'ge'){
+      query[`$expr`] = {$gte : [{ $toInt: `$careerStats.${stat}` }, compareValue]}
+    } else if(comparator.toLowerCase() === 'le'){
+      query[`$expr`] = {$lte : [{ $toInt: `$careerStats.${stat}` }, compareValue]}
+    }
+  }
+
+
+
+  console.log(otherCareerParams);
   const foundPlayers = Player.find(query, function(err, foundPlayers) {
 
     if (err) {
       res.send(err);
     } else {
-      // console.log('foundPlayers: ' +foundPlayers);
-        if(otherParams.length === 0){
-          res.send(foundPlayers);
-        } else {
-          const playerMap = {};
-          for(player of foundPlayers){
-            playerMap[player.nhlId] = player;
-          }  
 
-          const returnMap = {};
+        // console.log('hello')
+        if(otherSeasonParams.length === 0){
+          res.send(foundPlayers);
+          return;
+        } 
+        const playerMap = {};
+        for(player of foundPlayers){
+          playerMap[player.nhlId] = player;
+        }  
+        const returnMap = {};
+        if(otherSeasonParams.length !== 0){
           // console.log(`statseason appjs: ${statseason}`)
           let fullTeamName = '';
           if(statteam !== ''){
@@ -151,14 +178,14 @@ app.route("/players?*")
           }
           // console.log('fullTeam: ' + fullTeamName)
           if(sameSeason){
-            for(player of foundPlayers){
-              if(apiHelper.statComparatorSameSeasonWithTeamSeason(player, otherParams, fullTeamName, statseason, req)){
+            for(player of filteredPlayers){
+              if(apiHelper.statComparatorSameSeasonWithTeamSeason(player, otherSeasonParams, fullTeamName, statseason, req)){
                 returnMap[player.nhlId] = true;
               }
             }
           } else {
             let firstLoop = true;
-            for(const param of otherParams){
+            for(const param of otherSeasonParams){
               if(param.startsWith("season")){
                 const goalValue = parseInt(req.query[param].slice(2));
                 const comparator = req.query[param].slice(0,2);
@@ -177,17 +204,18 @@ app.route("/players?*")
               firstLoop = false;
             }
           }
-          const returnArray = [];
-          for(const [key, val] of Object.entries(returnMap)){
-            if(val){
-              returnArray.push(playerMap[key]);
-            }
-          }
-          // console.log(returnArray);
-          res.send(Object.values(returnArray));
         }
-    }
-  });
+        
+        const returnArray = [];
+        for(const [key, val] of Object.entries(returnMap)){
+          if(val){
+            returnArray.push(playerMap[key]);
+          }
+        }
+        // console.log(returnArray);
+        res.send(Object.values(returnArray));
+      }
+    });
 });
 
 // app.get("/", function(req, res) {
