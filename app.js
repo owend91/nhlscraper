@@ -156,8 +156,8 @@ app.route("/players?*")
             { $convert: {
               input: `$careerStats.${stat}`,
               to: 'int',
-              onError: 0,
-              onNull: 0
+              onError: 1000000,
+              onNull: 1000000
             } }, 
             compareValue]})
       } else if(comparator.toLowerCase() === 'eq'){
@@ -186,8 +186,8 @@ app.route("/players?*")
             { $convert: {
               input: `$careerStats.${stat}`,
               to: 'int',
-              onError: 0,
-              onNull: 0
+              onError: 1000000,
+              onNull: 1000000
             } }, 
             compareValue]})
       }
