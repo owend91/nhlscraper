@@ -133,33 +133,35 @@ app.route("/players?*")
     }
   }
 
-  for(param of otherCareerParams) {
-    const stat = param.slice(6);
-    const compareValue = parseInt(req.query[param].slice(2));
-    const comparator = req.query[param].slice(0,2);
-    if(comparator.toLowerCase() === 'gt'){
-      query[`$expr`] = {$gt : [{ $toInt: `$careerStats.${stat}` }, compareValue]}
-    } else if(comparator.toLowerCase() === 'lt'){
-      query[`$expr`] = {$lt : [{ $toInt: `$careerStats.${stat}` }, compareValue]}
-    } else if(comparator.toLowerCase() === 'eq'){
-      query[`$expr`] = {$eq : [{ $toInt: `$careerStats.${stat}` }, compareValue]}
-    } else if(comparator.toLowerCase() === 'ge'){
-      query[`$expr`] = {$gte : [{ $toInt: `$careerStats.${stat}` }, compareValue]}
-    } else if(comparator.toLowerCase() === 'le'){
-      query[`$expr`] = {$lte : [{ $toInt: `$careerStats.${stat}` }, compareValue]}
+  if(otherCareerParams.length > 0){
+    const careerParams = []
+    for(param of otherCareerParams) {
+      const stat = param.slice(6);
+      const compareValue = parseInt(req.query[param].slice(2));
+      const comparator = req.query[param].slice(0,2);
+      if(comparator.toLowerCase() === 'gt'){
+        careerParams.push({$gt : [{ $toInt: `$careerStats.${stat}` }, compareValue]})
+      } else if(comparator.toLowerCase() === 'lt'){
+        careerParams.push({$lt : [{ $toInt: `$careerStats.${stat}` }, compareValue]})
+      } else if(comparator.toLowerCase() === 'eq'){
+        careerParams.push({$eq : [{ $toInt: `$careerStats.${stat}` }, compareValue]})
+      } else if(comparator.toLowerCase() === 'ge'){
+        careerParams.push({$gte : [{ $toInt: `$careerStats.${stat}` }, compareValue]})
+      } else if(comparator.toLowerCase() === 'le'){
+        careerParams.push({$lte : [{ $toInt: `$careerStats.${stat}` }, compareValue]})
+      }
     }
+    query[`$expr`] = {$and: careerParams}
   }
 
-
-
-  console.log(otherCareerParams);
   const foundPlayers = Player.find(query, function(err, foundPlayers) {
 
     if (err) {
       res.send(err);
     } else {
+      // console.log('foundPLayers: ', foundPlayers)
 
-        // console.log('hello')
+        console.log('hello')
         if(otherSeasonParams.length === 0){
           res.send(foundPlayers);
           return;
